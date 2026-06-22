@@ -1,4 +1,5 @@
-"""System prompts for the ClearCast agent.
+"""
+System prompts for the ClearCast agent.
 """
 
 from datetime import datetime
