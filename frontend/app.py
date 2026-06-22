@@ -1,7 +1,4 @@
 """ClearCast Gradio Blocks frontend.
-
-This form-based interface turns campaign parameters into weather-driven
-recommendations, following the Week 4 Sidekick Blocks pattern.
 """
 
 import asyncio
