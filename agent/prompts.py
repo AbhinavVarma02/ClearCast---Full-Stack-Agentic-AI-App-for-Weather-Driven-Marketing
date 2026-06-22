@@ -1,7 +1,4 @@
 """System prompts for the ClearCast agent.
-
-Kept separate for easy iteration, following the Sidekick and Trading Floor
-templates.py pattern from the Week 4 and Week 6 coursework.
 """
 
 from datetime import datetime
