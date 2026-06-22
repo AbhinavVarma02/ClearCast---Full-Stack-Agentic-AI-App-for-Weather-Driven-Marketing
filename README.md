@@ -27,6 +27,10 @@ User -> Gradio Frontend -> LangGraph Agent -> MCP Client Bridge -> MCP Server (F
 - [OpenAI API key](https://platform.openai.com/api-keys)
 - [LangSmith API key](https://smith.langchain.com/) (optional, for tracing)
 
+## UI
+<img width="1035" height="679" alt="image" src="https://github.com/user-attachments/assets/a36044f8-ec5c-4340-ac43-edee0a9ae32e" />
+
+
 ## Setup
 
 1. Clone the repository and enter its directory.
