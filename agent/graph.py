@@ -31,7 +31,7 @@ class State(TypedDict):
 
 
 async def build_graph():
-    """Discover MCP tools and compile the five-step Week 4 graph pattern."""
+    """Discover MCP tools and compile"""
     tools = await get_langchain_tools()
 
     # Step 2: create the graph builder after defining State.
