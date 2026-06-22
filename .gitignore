@@ -1,7 +1,34 @@
-# Private local configuration
+@'
+# Secrets
 .env
+.env.*
+!.env.example
 
-# Python-generated files
+# Knowledge base
+KB/
+
+# Local tooling
+.agents/
+.codex/
+.vscode/
+.idea/
+
+# Python
+.venv/
+venv/
 __pycache__/
 *.py[cod]
-.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Builds and logs
+dist/
+build/
+*.egg-info/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+'@ | Set-Content -Encoding utf8 .gitignore
