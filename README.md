@@ -115,6 +115,9 @@ All MCP server tests passed!
 
 The agent begins by asking MCP for its available tools and converts their JSON Schemas into Pydantic-backed LangChain `StructuredTool` objects. For a campaign request, GPT-4o-mini first geocodes the location and then loops through current weather, forecast, and—when relevant—air quality calls. LangGraph's `ToolNode` runs each request and returns the results to the model. The loop ends only when the model produces the requested marketing sections. `MemorySaver` keeps each `thread_id`'s conversation state between invocations.
 
+## Langsmith Tracing
+<img width="1035" height="538" alt="image" src="https://github.com/user-attachments/assets/bda33f75-6f32-4524-a55d-ef55d2b8b135" />
+
 ## Deployment
 
 Locally, the MCP server uses stdio and is spawned as a Python subprocess by the agent. In production, the agent and MCP server can remain together in one container so stdio still works, or the MCP server can move to an HTTP transport for independent deployment and scaling. See [docs/deployment.md](docs/deployment.md) and `docker-compose.yml` for the tradeoffs and an illustrative service layout.
