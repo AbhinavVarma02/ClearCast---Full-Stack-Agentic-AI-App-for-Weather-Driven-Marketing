@@ -1,6 +1,6 @@
 # ClearCast Architecture
 
-ClearCast uses four application layers plus an external weather provider. Each layer has one reason to change, which keeps the weather integration independently testable and makes the UI, model, and API provider replaceable.
+ClearCast uses 4 application layers plus an external weather provider. Each layer has one reason to change, which keeps the weather integration independently testable and makes the UI, model, and API provider replaceable.
 
 ## Four Layers
 
@@ -27,7 +27,7 @@ At startup, the bridge lists tools from FastMCP and creates a validated LangChai
 
 ## State Flow
 
-The graph state contains a `messages` list annotated with LangGraph's `add_messages` reducer. Nodes return only their new messages; the reducer appends or updates them instead of discarding the conversation. This preserves user requests, assistant tool calls, and tool results through every super-step.
+The graph-state contains a `messages` list annotated with LangGraph's `add_messages` reducer. Nodes return only their new messages; the reducer appends or updates them instead of discarding the conversation. This preserves user requests, assistant tool calls, and tool results through every super-step.
 
 `MemorySaver` checkpoints state under `configurable.thread_id`, so repeated invocations with the same identifier share history and different identifiers remain isolated. It is appropriate for the local demo; a persistent checkpointer such as `PostgresSaver` is the production replacement.
 
