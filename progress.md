@@ -87,3 +87,4 @@
 - Created local deployment commit `962a4cb` with message `Prepare ClearCast AI for Hugging Face Spaces deployment`.
 - Error: `git push space main` was rejected because the Hugging Face Space remote contains work not present locally and requires fetching/integration first.
 - Fetched the current Hugging Face Space branch `space/main` successfully.
+- Error: merging `space/main` produced an expected add/add conflict in `README.md`; resolving by keeping the deployment README and preserving Space `.gitattributes`.
