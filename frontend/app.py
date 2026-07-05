@@ -3,6 +3,7 @@
 
 import asyncio
 import os
+import re
 from pathlib import Path
 
 import gradio as gr
@@ -28,6 +29,23 @@ def _get_graph():
     if _graph is None:
         _graph = asyncio.run(build_graph())
     return _graph
+
+
+def _safe_error_detail(exc: Exception) -> str:
+    """Return a redacted error detail that is safe to show in the UI."""
+    detail = str(exc).strip()
+    if not detail:
+        return "No additional error details were provided."
+
+    redactions = [
+        (r"sk-[A-Za-z0-9_-]+", "sk-...[redacted]"),
+        (r"hf_[A-Za-z0-9]+", "hf_...[redacted]"),
+        (r"(?i)(appid=)[^&\s]+", r"\1[redacted]"),
+        (r"(?i)(api[_-]?key=)[^&\s]+", r"\1[redacted]"),
+    ]
+    for pattern, replacement in redactions:
+        detail = re.sub(pattern, replacement, detail)
+    return detail[:600]
 
 
 def process_request(
@@ -60,10 +78,10 @@ suggested ad copy, risk notes, and a forecast summary table."""
 
     try:
         return invoke_graph(_get_graph(), user_message)
-    except Exception as exc:  # Show the error type without echoing secret-bearing details.
+    except Exception as exc:
         return (
             f"Request failed ({type(exc).__name__}). "
-            "Please check your API keys and try again."
+            f"Details: {_safe_error_detail(exc)}"
         )
 
 
