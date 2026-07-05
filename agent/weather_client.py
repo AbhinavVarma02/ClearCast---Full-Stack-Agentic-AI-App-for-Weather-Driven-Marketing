@@ -52,7 +52,8 @@ def _build_args_schema(tool: Any) -> type:
         if name in required:
             fields[name] = (python_type, Field(..., description=description))
         else:
-            fields[name] = (python_type | None, Field(None, description=description))
+            default = definition.get("default", None)
+            fields[name] = (python_type, Field(default, description=description))
 
     model_name = "".join(part.title() for part in tool.name.split("_")) + "Args"
     return create_model(model_name, **fields)

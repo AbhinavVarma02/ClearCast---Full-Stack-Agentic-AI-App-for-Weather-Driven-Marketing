@@ -38,7 +38,7 @@ async def build_graph():
     graph_builder = StateGraph(State)
 
     # Step 3: bind discovered schemas so the model can select MCP tools.
-    llm = ChatOpenAI(model="gpt-4o-mini")
+    llm = ChatOpenAI(model="gpt-5.5")
     llm_with_tools = llm.bind_tools(tools)
 
     def chatbot(state: State):
