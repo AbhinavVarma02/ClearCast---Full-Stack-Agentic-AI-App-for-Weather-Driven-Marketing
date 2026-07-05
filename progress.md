@@ -93,3 +93,11 @@
 - Verified Hugging Face Space page returns HTTP 200.
 - Verified Hugging Face API reports Space sha `17c3c38d0ca1d5a275bec9281c1369ad31b16a59`, sdk `gradio`, and public visibility.
 - Remaining runtime issue: Hugging Face reports stage `PAUSED` with error `Quota exceeded for flavor cpu-basic (requested=1): current=4, limit=3`.
+- Received Hugging Face startup log showing Gradio SSR enabled and an ignored Python 3.13 asyncio invalid file descriptor cleanup exception.
+- Verified Gradio `Blocks.launch` supports `ssr_mode`.
+- Error: `apply_patch` failed again due to the Windows sandbox helper refresh issue, so the tiny launch edit was applied with a scoped PowerShell replacement.
+- Error: review found PowerShell added a UTF-8 BOM and an extra EOF blank line to `frontend/app.py`; cleaning with UTF-8 without BOM.
+- `python -m compileall app.py frontend agent mcp_server` passed after disabling Gradio SSR.
+- Imported root `app.py` successfully after disabling Gradio SSR.
+- Confirmed `.env` is absent and not tracked after the SSR fix.
+- Short `python app.py` launch check stayed running and did not print the SSR/Node proxy startup line.

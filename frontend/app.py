@@ -754,7 +754,11 @@ with gr.Blocks(title="ClearCast", fill_width=True) as app:
 
 def launch(**kwargs):
     """Launch ClearCast with its existing Gradio theme and CSS."""
-    launch_kwargs = {"theme": CLEARCAST_THEME, "css": CLEARCAST_CSS}
+    launch_kwargs = {
+        "theme": CLEARCAST_THEME,
+        "css": CLEARCAST_CSS,
+        "ssr_mode": False,
+    }
     launch_kwargs.update(kwargs)
     return app.launch(**launch_kwargs)
 
