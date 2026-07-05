@@ -89,3 +89,7 @@
 - Fetched the current Hugging Face Space branch `space/main` successfully.
 - Error: merging `space/main` produced an expected add/add conflict in `README.md`; resolving by keeping the deployment README and preserving Space `.gitattributes`.
 - Completed merge commit `ef927c0` integrating `space/main`; kept deployment README and preserved Space `.gitattributes`.
+- Pushed deployment commits to Hugging Face Space successfully; `space/main` advanced to `17c3c38`.
+- Verified Hugging Face Space page returns HTTP 200.
+- Verified Hugging Face API reports Space sha `17c3c38d0ca1d5a275bec9281c1369ad31b16a59`, sdk `gradio`, and public visibility.
+- Remaining runtime issue: Hugging Face reports stage `PAUSED` with error `Quota exceeded for flavor cpu-basic (requested=1): current=4, limit=3`.
