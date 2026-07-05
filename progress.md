@@ -113,3 +113,5 @@
 - Added sanitized user-facing exception details to diagnose the new post-OpenAI `RuntimeError` without exposing API keys.
 - Deployed diagnostic request showed `Error executing tool geocode_city: OPENWEATHERMAP_API_KEY environment variable is missing`.
 - Updated MCP stdio subprocess launch to pass only `OPENWEATHERMAP_API_KEY` and `OPENAI_API_KEY` from the Space environment into the child process.
+- Verified deployed end-to-end generation via Gradio client after MCP subprocess env fix.
+- Test request for Baltimore coffee shop returned a full campaign strategy instead of `BadRequestError` or `RuntimeError`.
