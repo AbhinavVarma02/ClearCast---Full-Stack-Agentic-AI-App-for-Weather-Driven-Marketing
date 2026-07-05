@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 ENV_PATH = PROJECT_ROOT / ".env"
-load_dotenv(dotenv_path=ENV_PATH, override=True)
+load_dotenv(dotenv_path=ENV_PATH, override=False)
 
 OPENWEATHERMAP_API_KEY = (os.getenv("OPENWEATHERMAP_API_KEY") or "").strip()
 
@@ -19,7 +19,7 @@ def _api_key() -> str:
     """Return the validated API key without exposing its value."""
     if not OPENWEATHERMAP_API_KEY:
         raise ValueError(
-            "OPENWEATHERMAP_API_KEY is missing from the project .env file"
+            "OPENWEATHERMAP_API_KEY environment variable is missing"
         )
 
     placeholder_markers = ("your_", "your-", "placeholder", "replace_me", "changeme")
@@ -27,10 +27,7 @@ def _api_key() -> str:
         marker in OPENWEATHERMAP_API_KEY.casefold()
         for marker in placeholder_markers
     ):
-        raise ValueError(
-            "OPENWEATHERMAP_API_KEY still appears to contain placeholder text in "
-            "the project .env file, or a stale environment variable is being used"
-        )
+        raise ValueError("OPENWEATHERMAP_API_KEY appears to contain placeholder text")
 
     return OPENWEATHERMAP_API_KEY
 
@@ -44,8 +41,7 @@ def _get(path: str, params: dict) -> object:
         return response.json()
     except requests.HTTPError as exc:
         status = exc.response.status_code if exc.response is not None else "unknown"
-        text = exc.response.text if exc.response is not None else str(exc)
-        raise RuntimeError(f"OpenWeatherMap API request failed ({status}): {text}") from exc
+        raise RuntimeError(f"OpenWeatherMap API request failed ({status})") from exc
     except requests.RequestException as exc:
         # Request exception strings may contain the full URL, including appid.
         raise RuntimeError(

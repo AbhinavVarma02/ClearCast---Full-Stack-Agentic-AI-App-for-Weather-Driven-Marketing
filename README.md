@@ -1,3 +1,13 @@
+---
+title: ClearCast AI
+emoji: 🌦️
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+app_file: app.py
+pinned: false
+---
+
 # ClearCast — Full-Stack Agentic AI App for Weather-Driven Marketing
 
 ClearCast turns live OpenWeatherMap conditions and forecasts into actionable marketing campaign recommendations. A LangGraph agent discovers weather tools through MCP, selects the data it needs, and recommends campaign windows, business-specific reasoning, ad copy, and risk mitigations rather than merely repeating a forecast.

@@ -20,7 +20,7 @@ from agent.prompts import get_system_prompt
 from agent.weather_client import get_langchain_tools
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(dotenv_path=PROJECT_ROOT / ".env", override=True)
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env", override=False)
 
 
 class State(TypedDict):

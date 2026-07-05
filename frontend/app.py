@@ -2,6 +2,7 @@
 """
 
 import asyncio
+import os
 from pathlib import Path
 
 import gradio as gr
@@ -10,13 +11,23 @@ from dotenv import load_dotenv
 from agent.graph import build_graph, invoke_graph
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-load_dotenv(dotenv_path=PROJECT_ROOT / ".env", override=True)
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env", override=False)
 
-# Gradio startup is synchronous in this setup, so the async graph factory is
-# completed once before the first request.
-print("Building ClearCast agent...")
-graph = asyncio.run(build_graph())
-print("Agent ready!")
+REQUIRED_ENV_VARS = ("OPENWEATHERMAP_API_KEY", "OPENAI_API_KEY")
+_graph = None
+
+
+def _missing_required_env_vars() -> list[str]:
+    """Return required secret names that are absent without exposing values."""
+    return [name for name in REQUIRED_ENV_VARS if not (os.getenv(name) or "").strip()]
+
+
+def _get_graph():
+    """Build the LangGraph agent lazily so the Gradio app can boot on Spaces."""
+    global _graph
+    if _graph is None:
+        _graph = asyncio.run(build_graph())
+    return _graph
 
 
 def process_request(
@@ -39,8 +50,16 @@ Preferred tone for ad copy: {tone}
 Provide your full analysis with recommended campaign windows, weather reasoning,
 suggested ad copy, risk notes, and a forecast summary table."""
 
+    missing = _missing_required_env_vars()
+    if missing:
+        missing_names = ", ".join(missing)
+        return (
+            f"ClearCast is missing required configuration: {missing_names}. "
+            "Add these secrets in Hugging Face Spaces settings and restart the app."
+        )
+
     try:
-        return invoke_graph(graph, user_message)
+        return invoke_graph(_get_graph(), user_message)
     except Exception as exc:  # Show the error type without echoing secret-bearing details.
         return (
             f"Request failed ({type(exc).__name__}). "
@@ -733,6 +752,12 @@ with gr.Blocks(title="ClearCast", fill_width=True) as app:
     )
 
 
+def launch(**kwargs):
+    """Launch ClearCast with its existing Gradio theme and CSS."""
+    launch_kwargs = {"theme": CLEARCAST_THEME, "css": CLEARCAST_CSS}
+    launch_kwargs.update(kwargs)
+    return app.launch(**launch_kwargs)
+
+
 if __name__ == "__main__":
-    # Gradio 6 expects theme and css at launch rather than Blocks creation.
-    app.launch(inbrowser=True, theme=CLEARCAST_THEME, css=CLEARCAST_CSS)
+    launch(inbrowser=True)
