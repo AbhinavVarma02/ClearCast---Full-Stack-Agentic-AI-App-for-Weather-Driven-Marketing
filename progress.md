@@ -85,3 +85,5 @@
 - Verified `.env` is not staged.
 - Verified staged diff passes `git diff --cached --check`.
 - Created local deployment commit `962a4cb` with message `Prepare ClearCast AI for Hugging Face Spaces deployment`.
+- Error: `git push space main` was rejected because the Hugging Face Space remote contains work not present locally and requires fetching/integration first.
+- Fetched the current Hugging Face Space branch `space/main` successfully.
