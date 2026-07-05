@@ -101,3 +101,6 @@
 - Imported root `app.py` successfully after disabling Gradio SSR.
 - Confirmed `.env` is absent and not tracked after the SSR fix.
 - Short `python app.py` launch check stayed running and did not print the SSR/Node proxy startup line.
+- Pushed Gradio SSR startup fix to Hugging Face Space at commit `a182785`.
+- Verified Hugging Face API reports repo sha `a1827854fd018bf08ac32e496520dbf748b9f0f1`.
+- Verified Hugging Face runtime stage is `RUNNING` on `cpu-basic`, with runtime sha `a1827854fd018bf08ac32e496520dbf748b9f0f1`.
