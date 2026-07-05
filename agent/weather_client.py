@@ -4,6 +4,7 @@ adapted to discover MCP tools and expose them as LangChain StructuredTool object
 """
 
 import asyncio
+import os
 from typing import Any
 
 from langchain_core.tools import StructuredTool
@@ -12,8 +13,15 @@ from mcp.client.stdio import stdio_client
 from pydantic import Field, create_model
 
 # Module mode lets the subprocess resolve package imports from the project root.
+MCP_ENV = {
+    name: value
+    for name in ("OPENWEATHERMAP_API_KEY", "OPENAI_API_KEY")
+    if (value := os.getenv(name))
+}
 WEATHER_SERVER_PARAMS = StdioServerParameters(
-    command="python", args=["-m", "mcp_server.weather_server"]
+    command="python",
+    args=["-m", "mcp_server.weather_server"],
+    env=MCP_ENV or None,
 )
 
 

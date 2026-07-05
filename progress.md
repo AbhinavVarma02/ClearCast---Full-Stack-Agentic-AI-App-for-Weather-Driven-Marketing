@@ -111,3 +111,5 @@
 - Updated OpenAI model to `gpt-5.5` and changed MCP optional argument schema generation to preserve plain defaults instead of nullable unions.
 - Verified fixed OpenAI-bound tool payload: `country_code` is now a plain string with default empty string, not a nullable union.
 - Added sanitized user-facing exception details to diagnose the new post-OpenAI `RuntimeError` without exposing API keys.
+- Deployed diagnostic request showed `Error executing tool geocode_city: OPENWEATHERMAP_API_KEY environment variable is missing`.
+- Updated MCP stdio subprocess launch to pass only `OPENWEATHERMAP_API_KEY` and `OPENAI_API_KEY` from the Space environment into the child process.
