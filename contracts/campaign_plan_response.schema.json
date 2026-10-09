@@ -1,0 +1,1823 @@
+{
+  "$defs": {
+    "AirQualityObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "aqi": {
+          "title": "Aqi",
+          "type": "integer"
+        },
+        "forecast_available": {
+          "title": "Forecast Available",
+          "type": "boolean"
+        },
+        "forecast_block_count": {
+          "title": "Forecast Block Count",
+          "type": "integer"
+        },
+        "o3_ugm3": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "O3 Ugm3"
+        },
+        "observation_id": {
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "observed_at_utc": {
+          "format": "date-time",
+          "title": "Observed At Utc",
+          "type": "string"
+        },
+        "pm10_ugm3": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pm10 Ugm3"
+        },
+        "pm2_5_ugm3": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pm2 5 Ugm3"
+        }
+      },
+      "required": [
+        "observation_id",
+        "observed_at_utc",
+        "aqi",
+        "pm2_5_ugm3",
+        "pm10_ugm3",
+        "o3_ugm3",
+        "forecast_available",
+        "forecast_block_count"
+      ],
+      "title": "AirQualityObservation",
+      "type": "object"
+    },
+    "CampaignBrief": {
+      "additionalProperties": false,
+      "description": "The four original campaign inputs.",
+      "properties": {
+        "business_type": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]*[^\\x00-\\x20\\x7f][^\\x00-\\x1f\\x7f]*$",
+          "title": "Business Type",
+          "type": "string"
+        },
+        "campaign_goal": {
+          "default": "",
+          "maxLength": 300,
+          "pattern": "^[^\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]*$",
+          "title": "Campaign Goal",
+          "type": "string"
+        },
+        "location": {
+          "maxLength": 120,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]*[^\\x00-\\x20\\x7f][^\\x00-\\x1f\\x7f]*$",
+          "title": "Location",
+          "type": "string"
+        },
+        "tone": {
+          "default": "Friendly",
+          "enum": [
+            "Friendly",
+            "Urgent",
+            "Playful",
+            "Premium"
+          ],
+          "title": "Tone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location",
+        "business_type"
+      ],
+      "title": "CampaignBrief",
+      "type": "object"
+    },
+    "CampaignPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "analyst_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Analyst Notes"
+        },
+        "brief": {
+          "$ref": "#/$defs/CampaignBrief"
+        },
+        "campaign_goal": {
+          "title": "Campaign Goal",
+          "type": "string"
+        },
+        "client": {
+          "$ref": "#/$defs/ClientSnapshot"
+        },
+        "diagnostics": {
+          "$ref": "#/$defs/Diagnostics"
+        },
+        "disclaimers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Disclaimers",
+          "type": "array"
+        },
+        "evidence": {
+          "$ref": "#/$defs/EvidenceLedger"
+        },
+        "forecast_summary": {
+          "items": {
+            "$ref": "#/$defs/DailyForecastSummary"
+          },
+          "title": "Forecast Summary",
+          "type": "array"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "plan_hash": {
+          "title": "Plan Hash",
+          "type": "string"
+        },
+        "rejected_windows": {
+          "items": {
+            "$ref": "#/$defs/CampaignWindow"
+          },
+          "title": "Rejected Windows",
+          "type": "array"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "resolved_location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResolvedLocation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "review": {
+          "$ref": "#/$defs/ReviewState"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "integer"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_ref": {
+          "title": "Session Ref",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ReviewStatus"
+        },
+        "strategy_summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Strategy Summary"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "validation": {
+          "$ref": "#/$defs/ValidationReport"
+        },
+        "windows": {
+          "items": {
+            "$ref": "#/$defs/CampaignWindow"
+          },
+          "title": "Windows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "session_ref",
+        "revision",
+        "plan_hash",
+        "generated_at",
+        "updated_at",
+        "status",
+        "brief",
+        "campaign_goal",
+        "client",
+        "resolved_location",
+        "strategy_summary",
+        "windows",
+        "rejected_windows",
+        "risks",
+        "forecast_summary",
+        "evidence",
+        "analyst_notes",
+        "validation",
+        "review",
+        "diagnostics",
+        "disclaimers"
+      ],
+      "title": "CampaignPlan",
+      "type": "object"
+    },
+    "CampaignWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "ad_copy": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ad Copy",
+          "type": "array"
+        },
+        "claimed_conditions": {
+          "$ref": "#/$defs/ClaimedConditions"
+        },
+        "constraint_check": {
+          "$ref": "#/$defs/ConstraintCheck"
+        },
+        "daypart": {
+          "title": "Daypart",
+          "type": "string"
+        },
+        "end_local": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End Local"
+        },
+        "end_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End Utc"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/ForecastObservation"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "grounding": {
+          "$ref": "#/$defs/GroundingCheck"
+        },
+        "marketing_hypothesis": {
+          "title": "Marketing Hypothesis",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "observed_conditions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ObservedConditions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "title": "Risks",
+          "type": "array"
+        },
+        "start_local": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Start Local"
+        },
+        "start_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Start Utc"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "weather_reasoning": {
+          "title": "Weather Reasoning",
+          "type": "string"
+        },
+        "window_id": {
+          "title": "Window Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "window_id",
+        "title",
+        "daypart",
+        "start_local",
+        "end_local",
+        "start_utc",
+        "end_utc",
+        "observation_ids",
+        "evidence",
+        "observed_conditions",
+        "claimed_conditions",
+        "weather_reasoning",
+        "marketing_hypothesis",
+        "ad_copy",
+        "risks",
+        "constraint_check",
+        "grounding"
+      ],
+      "title": "CampaignWindow",
+      "type": "object"
+    },
+    "ClaimedConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "aqi_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Highest AQI (1-5) across the cited blocks from the AQI forecast, or null.",
+          "title": "Aqi Max"
+        },
+        "conditions_summary": {
+          "description": "Short description of the cited conditions.",
+          "title": "Conditions Summary",
+          "type": "string"
+        },
+        "precipitation_probability_max_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Highest precipitation probability across cited blocks, in PERCENT (0-100).",
+          "title": "Precipitation Probability Max Pct"
+        },
+        "temperature_max_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Highest temperature (°F) across the cited forecast blocks, copied from evidence.",
+          "title": "Temperature Max F"
+        },
+        "temperature_min_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lowest temperature (°F) across the cited forecast blocks, copied from evidence.",
+          "title": "Temperature Min F"
+        },
+        "wind_speed_max_mph": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Highest wind speed (mph) across the cited blocks, or null.",
+          "title": "Wind Speed Max Mph"
+        }
+      },
+      "required": [
+        "temperature_min_f",
+        "temperature_max_f",
+        "precipitation_probability_max_pct",
+        "wind_speed_max_mph",
+        "aqi_max",
+        "conditions_summary"
+      ],
+      "title": "ClaimedConditions",
+      "type": "object"
+    },
+    "ClientConstraints": {
+      "additionalProperties": false,
+      "description": "Hard constraints verified by deterministic Python rules, never by the model.",
+      "properties": {
+        "allowed_hours": {
+          "items": {
+            "$ref": "#/$defs/HourRange"
+          },
+          "maxItems": 6,
+          "title": "Allowed Hours",
+          "type": "array"
+        },
+        "exclusion_windows": {
+          "items": {
+            "$ref": "#/$defs/ExclusionWindow"
+          },
+          "maxItems": 14,
+          "title": "Exclusion Windows",
+          "type": "array"
+        },
+        "max_aqi": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Aqi"
+        },
+        "max_precipitation_probability_pct": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Precipitation Probability Pct"
+        },
+        "max_temperature_f": {
+          "anyOf": [
+            {
+              "maximum": 140,
+              "minimum": -60,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Temperature F"
+        },
+        "max_wind_speed_mph": {
+          "anyOf": [
+            {
+              "maximum": 150,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Wind Speed Mph"
+        },
+        "min_temperature_f": {
+          "anyOf": [
+            {
+              "maximum": 140,
+              "minimum": -60,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Temperature F"
+        }
+      },
+      "title": "ClientConstraints",
+      "type": "object"
+    },
+    "ClientPreferences": {
+      "additionalProperties": false,
+      "description": "Soft preferences passed to the model as context; not enforced.",
+      "properties": {
+        "notes": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Notes",
+          "type": "string"
+        },
+        "preferred_conditions": {
+          "default": "",
+          "maxLength": 300,
+          "title": "Preferred Conditions",
+          "type": "string"
+        },
+        "promotion_ideas": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "title": "Promotion Ideas",
+          "type": "array"
+        }
+      },
+      "title": "ClientPreferences",
+      "type": "object"
+    },
+    "ClientSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "business_objective": {
+          "title": "Business Objective",
+          "type": "string"
+        },
+        "client_id": {
+          "enum": [
+            "general",
+            "demo_coffee_shop",
+            "demo_outdoor_fitness"
+          ],
+          "title": "Client Id",
+          "type": "string"
+        },
+        "constraints": {
+          "$ref": "#/$defs/ClientConstraints"
+        },
+        "constraints_source": {
+          "enum": [
+            "profile_default",
+            "request_override"
+          ],
+          "title": "Constraints Source",
+          "type": "string"
+        },
+        "display_name": {
+          "title": "Display Name",
+          "type": "string"
+        },
+        "fictional": {
+          "title": "Fictional",
+          "type": "boolean"
+        },
+        "preferences": {
+          "$ref": "#/$defs/ClientPreferences"
+        }
+      },
+      "required": [
+        "client_id",
+        "display_name",
+        "fictional",
+        "business_objective",
+        "constraints",
+        "constraints_source",
+        "preferences"
+      ],
+      "title": "ClientSnapshot",
+      "type": "object"
+    },
+    "ConstraintCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "eligible": {
+          "title": "Eligible",
+          "type": "boolean"
+        },
+        "violations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Violations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "eligible",
+        "violations"
+      ],
+      "title": "ConstraintCheck",
+      "type": "object"
+    },
+    "CurrentObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "cloud_cover_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cloud Cover Pct"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "feels_like_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Feels Like F"
+        },
+        "humidity_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Humidity Pct"
+        },
+        "missing_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Fields",
+          "type": "array"
+        },
+        "observation_id": {
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "observed_at_utc": {
+          "format": "date-time",
+          "title": "Observed At Utc",
+          "type": "string"
+        },
+        "temperature_f": {
+          "title": "Temperature F",
+          "type": "number"
+        },
+        "wind_speed_mph": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Wind Speed Mph"
+        }
+      },
+      "required": [
+        "observation_id",
+        "observed_at_utc",
+        "temperature_f",
+        "feels_like_f",
+        "humidity_pct",
+        "wind_speed_mph",
+        "cloud_cover_pct",
+        "description",
+        "missing_fields"
+      ],
+      "title": "CurrentObservation",
+      "type": "object"
+    },
+    "DailyForecastSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "block_count": {
+          "title": "Block Count",
+          "type": "integer"
+        },
+        "conditions": {
+          "title": "Conditions",
+          "type": "string"
+        },
+        "date_local": {
+          "title": "Date Local",
+          "type": "string"
+        },
+        "high_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "High F"
+        },
+        "low_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Low F"
+        },
+        "max_precipitation_probability_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Precipitation Probability Pct"
+        },
+        "max_wind_speed_mph": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Wind Speed Mph"
+        }
+      },
+      "required": [
+        "date_local",
+        "low_f",
+        "high_f",
+        "max_precipitation_probability_pct",
+        "max_wind_speed_mph",
+        "conditions",
+        "block_count"
+      ],
+      "title": "DailyForecastSummary",
+      "type": "object"
+    },
+    "Diagnostics": {
+      "additionalProperties": false,
+      "properties": {
+        "cache_hits": {
+          "title": "Cache Hits",
+          "type": "integer"
+        },
+        "client_id": {
+          "title": "Client Id",
+          "type": "string"
+        },
+        "cost_note": {
+          "title": "Cost Note",
+          "type": "string"
+        },
+        "drafting_duration_ms": {
+          "title": "Drafting Duration Ms",
+          "type": "integer"
+        },
+        "duration_ms": {
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "estimated_cost_usd": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Estimated Cost Usd"
+        },
+        "graph_duration_ms": {
+          "title": "Graph Duration Ms",
+          "type": "integer"
+        },
+        "llm_calls": {
+          "title": "Llm Calls",
+          "type": "integer"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider_error_categories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Provider Error Categories",
+          "type": "array"
+        },
+        "recursion_limit": {
+          "title": "Recursion Limit",
+          "type": "integer"
+        },
+        "repair_attempts": {
+          "title": "Repair Attempts",
+          "type": "integer"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "review_status": {
+          "title": "Review Status",
+          "type": "string"
+        },
+        "session_ref": {
+          "title": "Session Ref",
+          "type": "string"
+        },
+        "step_limit_reached": {
+          "title": "Step Limit Reached",
+          "type": "boolean"
+        },
+        "token_usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TokenUsage"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tool_calls": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Tool Calls",
+          "type": "object"
+        },
+        "tool_errors": {
+          "title": "Tool Errors",
+          "type": "integer"
+        },
+        "validation_status": {
+          "title": "Validation Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "session_ref",
+        "client_id",
+        "model",
+        "duration_ms",
+        "graph_duration_ms",
+        "drafting_duration_ms",
+        "llm_calls",
+        "tool_calls",
+        "tool_errors",
+        "provider_error_categories",
+        "cache_hits",
+        "repair_attempts",
+        "recursion_limit",
+        "step_limit_reached",
+        "validation_status",
+        "review_status",
+        "token_usage",
+        "estimated_cost_usd",
+        "cost_note"
+      ],
+      "title": "Diagnostics",
+      "type": "object"
+    },
+    "EvidenceLedger": {
+      "additionalProperties": false,
+      "properties": {
+        "air_quality": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AirQualityObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CurrentObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "forecast": {
+          "items": {
+            "$ref": "#/$defs/ForecastObservation"
+          },
+          "title": "Forecast",
+          "type": "array"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResolvedLocation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/EvidenceSource"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "units": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Units",
+          "type": "object"
+        }
+      },
+      "required": [
+        "location",
+        "forecast",
+        "current",
+        "air_quality",
+        "sources",
+        "units",
+        "issues"
+      ],
+      "title": "EvidenceLedger",
+      "type": "object"
+    },
+    "EvidenceSource": {
+      "additionalProperties": false,
+      "properties": {
+        "cache_age_seconds": {
+          "title": "Cache Age Seconds",
+          "type": "integer"
+        },
+        "cache_hit": {
+          "title": "Cache Hit",
+          "type": "boolean"
+        },
+        "error_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Error Category"
+        },
+        "fetched_at_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fetched At Utc"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source"
+        },
+        "status": {
+          "enum": [
+            "ok",
+            "error"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "tool": {
+          "title": "Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool",
+        "status",
+        "source",
+        "fetched_at_utc",
+        "cache_hit",
+        "cache_age_seconds",
+        "error_category"
+      ],
+      "title": "EvidenceSource",
+      "type": "object"
+    },
+    "ExclusionWindow": {
+      "additionalProperties": false,
+      "description": "Local weekday hours when the client must not run a campaign.",
+      "properties": {
+        "end_hour": {
+          "maximum": 24,
+          "minimum": 1,
+          "title": "End Hour",
+          "type": "integer"
+        },
+        "reason": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Reason",
+          "type": "string"
+        },
+        "start_hour": {
+          "maximum": 23,
+          "minimum": 0,
+          "title": "Start Hour",
+          "type": "integer"
+        },
+        "weekdays": {
+          "items": {
+            "enum": [
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun"
+            ],
+            "type": "string"
+          },
+          "maxItems": 7,
+          "minItems": 1,
+          "title": "Weekdays",
+          "type": "array"
+        }
+      },
+      "required": [
+        "weekdays",
+        "start_hour",
+        "end_hour"
+      ],
+      "title": "ExclusionWindow",
+      "type": "object"
+    },
+    "ForecastObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "aqi": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Max AQI for this block from the AQI forecast, if available.",
+          "title": "Aqi"
+        },
+        "aqi_observation_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Aqi Observation Id"
+        },
+        "datetime_local": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Datetime Local"
+        },
+        "datetime_utc": {
+          "format": "date-time",
+          "title": "Datetime Utc",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Description"
+        },
+        "feels_like_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Feels Like F"
+        },
+        "humidity_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Humidity Pct"
+        },
+        "missing_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Fields",
+          "type": "array"
+        },
+        "observation_id": {
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "precipitation_probability_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Precipitation Probability Pct"
+        },
+        "rain_volume_mm_3h": {
+          "title": "Rain Volume Mm 3H",
+          "type": "number"
+        },
+        "temperature_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Temperature F"
+        },
+        "wind_speed_mph": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Wind Speed Mph"
+        }
+      },
+      "required": [
+        "observation_id",
+        "datetime_utc",
+        "datetime_local",
+        "temperature_f",
+        "feels_like_f",
+        "humidity_pct",
+        "wind_speed_mph",
+        "precipitation_probability_pct",
+        "rain_volume_mm_3h",
+        "description",
+        "aqi",
+        "aqi_observation_id",
+        "missing_fields"
+      ],
+      "title": "ForecastObservation",
+      "type": "object"
+    },
+    "GroundingCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "verified": {
+          "title": "Verified",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "verified",
+        "issues"
+      ],
+      "title": "GroundingCheck",
+      "type": "object"
+    },
+    "HourRange": {
+      "additionalProperties": false,
+      "description": "A local-time hour range [start_hour, end_hour).",
+      "properties": {
+        "end_hour": {
+          "maximum": 24,
+          "minimum": 1,
+          "title": "End Hour",
+          "type": "integer"
+        },
+        "start_hour": {
+          "maximum": 23,
+          "minimum": 0,
+          "title": "Start Hour",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_hour",
+        "end_hour"
+      ],
+      "title": "HourRange",
+      "type": "object"
+    },
+    "ObservedConditions": {
+      "additionalProperties": false,
+      "description": "Deterministically computed from the cited evidence.",
+      "properties": {
+        "aqi_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Aqi Max"
+        },
+        "conditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Conditions",
+          "type": "array"
+        },
+        "feels_like_min_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Feels Like Min F"
+        },
+        "precipitation_probability_max_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Precipitation Probability Max Pct"
+        },
+        "rain_volume_total_mm": {
+          "title": "Rain Volume Total Mm",
+          "type": "number"
+        },
+        "temperature_max_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Temperature Max F"
+        },
+        "temperature_min_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Temperature Min F"
+        },
+        "wind_speed_max_mph": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Wind Speed Max Mph"
+        }
+      },
+      "required": [
+        "temperature_min_f",
+        "temperature_max_f",
+        "feels_like_min_f",
+        "precipitation_probability_max_pct",
+        "wind_speed_max_mph",
+        "rain_volume_total_mm",
+        "aqi_max",
+        "conditions"
+      ],
+      "title": "ObservedConditions",
+      "type": "object"
+    },
+    "ResolvedLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "country": {
+          "title": "Country",
+          "type": "string"
+        },
+        "lat": {
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "title": "Lon",
+          "type": "number"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "observation_id": {
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "state": {
+          "title": "State",
+          "type": "string"
+        },
+        "timezone_label": {
+          "title": "Timezone Label",
+          "type": "string"
+        },
+        "timezone_offset_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timezone Offset Seconds"
+        },
+        "timezone_source": {
+          "title": "Timezone Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "state",
+        "country",
+        "lat",
+        "lon",
+        "timezone_offset_seconds",
+        "timezone_label",
+        "timezone_source",
+        "observation_id"
+      ],
+      "title": "ResolvedLocation",
+      "type": "object"
+    },
+    "ReviewEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "from_status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReviewStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Note"
+        },
+        "plan_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Plan Hash"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "integer"
+        },
+        "to_status": {
+          "$ref": "#/$defs/ReviewStatus"
+        }
+      },
+      "required": [
+        "at",
+        "action",
+        "from_status",
+        "to_status",
+        "revision",
+        "plan_hash",
+        "note"
+      ],
+      "title": "ReviewEvent",
+      "type": "object"
+    },
+    "ReviewState": {
+      "additionalProperties": false,
+      "properties": {
+        "approved_plan_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved Plan Hash"
+        },
+        "decided_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Decided At"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/ReviewEvent"
+          },
+          "title": "History",
+          "type": "array"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Note"
+        },
+        "status": {
+          "$ref": "#/$defs/ReviewStatus"
+        }
+      },
+      "required": [
+        "status",
+        "decided_at",
+        "note",
+        "approved_plan_hash",
+        "history"
+      ],
+      "title": "ReviewState",
+      "type": "object"
+    },
+    "ReviewStatus": {
+      "enum": [
+        "draft",
+        "validation_failed",
+        "pending_review",
+        "approved",
+        "rejected"
+      ],
+      "title": "ReviewStatus",
+      "type": "string"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "mitigation": {
+          "title": "Mitigation",
+          "type": "string"
+        },
+        "observation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "risk": {
+          "title": "Risk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "risk",
+        "mitigation",
+        "observation_ids"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "TokenUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "calls_with_usage": {
+          "title": "Calls With Usage",
+          "type": "integer"
+        },
+        "calls_without_usage": {
+          "title": "Calls Without Usage",
+          "type": "integer"
+        },
+        "input_tokens": {
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "total_tokens": {
+          "title": "Total Tokens",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "input_tokens",
+        "output_tokens",
+        "total_tokens",
+        "calls_with_usage",
+        "calls_without_usage"
+      ],
+      "title": "TokenUsage",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "window_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Window Id"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "severity"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    },
+    "ValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_at": {
+          "format": "date-time",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "drafting_attempted": {
+          "title": "Drafting Attempted",
+          "type": "boolean"
+        },
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "repair_attempts": {
+          "title": "Repair Attempts",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "errors",
+        "warnings",
+        "repair_attempts",
+        "drafting_attempted",
+        "checked_at"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    }
+  },
+  "$id": "https://clearcast.local/contracts/campaign_plan_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "plan": {
+      "$ref": "#/$defs/CampaignPlan"
+    },
+    "report_markdown": {
+      "title": "Report Markdown",
+      "type": "string"
+    }
+  },
+  "required": [
+    "plan",
+    "report_markdown"
+  ],
+  "title": "CampaignPlanResponse",
+  "type": "object"
+}

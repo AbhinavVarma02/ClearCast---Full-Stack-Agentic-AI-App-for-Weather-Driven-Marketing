@@ -1,7 +1,10 @@
-"""Hugging Face Spaces entrypoint for ClearCast."""
+"""ClearCast entrypoint: start the full local stack (orchestrator, gateway, UI).
 
-from frontend.app import app, launch
+Equivalent to ``python -m deploy.launcher``. The Docker image (Hugging Face
+Space) runs the same launcher.
+"""
 
+from deploy.launcher import main
 
 if __name__ == "__main__":
-    launch()
+    raise SystemExit(main())

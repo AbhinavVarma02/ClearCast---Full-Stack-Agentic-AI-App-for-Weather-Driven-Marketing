@@ -1,11 +1,24 @@
 """Expose the raw weather API layer as documented MCP tools."""
 
+from functools import partial
+
+import anyio
 from mcp.server.fastmcp import FastMCP
 
 from mcp_server import weather_api
 
 # MCP Server wrapping OpenWeatherMap API. Pattern follows accounts_server.py from Week 6 MCP course.
-mcp = FastMCP("weather_server")
+mcp = FastMCP("weather_server", log_level="WARNING")
+
+
+async def _run_blocking(func, *args):
+    """Run blocking provider I/O in a worker thread.
+
+    The weather API layer uses a synchronous HTTP client with retries and
+    backoff sleeps; running it off the event loop keeps this server responsive
+    to concurrent MCP requests on the shared stdio session.
+    """
+    return await anyio.to_thread.run_sync(partial(func, *args))
 
 
 @mcp.tool()
@@ -17,18 +30,20 @@ async def geocode_city(city: str, country_code: str = "") -> dict:
         country_code: Optional ISO 3166 country code (e.g., 'US', 'GB')
     """
     # Call the raw API wrapper
-    return weather_api.geocode_city(city, country_code)
+    return await _run_blocking(weather_api.geocode_city, city, country_code)
 
 
 @mcp.tool()
 async def get_current_weather(lat: float, lon: float) -> dict:
     """Get current weather conditions for a location using coordinates.
     Call geocode_city first to convert a city name to coordinates.
+    Temperatures are °F, wind speed is mph. The result includes an observation_id,
+    the observation time in UTC and local time, and the local timezone offset.
     Args:
         lat: Latitude of the location
         lon: Longitude of the location
     """
-    return weather_api.get_current_weather(lat, lon)
+    return await _run_blocking(weather_api.get_current_weather, lat, lon)
 
 
 @mcp.tool()
@@ -36,11 +51,14 @@ async def get_forecast(lat: float, lon: float) -> dict:
     """Get a 5-day weather forecast in 3-hour intervals for a location.
     Returns temperature, rain probability, and conditions for each 3-hour block.
     This data is useful for identifying the best dayparts for marketing campaigns.
+    Each block has an observation_id, datetime_utc, and datetime_local (the market's
+    local time). Temperatures are °F, wind speed is mph, rain_probability is a
+    fraction from 0 to 1, and rain_volume_3h is millimetres.
     Args:
         lat: Latitude of the location
         lon: Longitude of the location
     """
-    return weather_api.get_forecast(lat, lon)
+    return await _run_blocking(weather_api.get_forecast, lat, lon)
 
 
 @mcp.tool()
@@ -48,11 +66,12 @@ async def get_air_quality(lat: float, lon: float) -> dict:
     """Get air quality index and pollutant levels for a location.
     Useful for determining if outdoor activities and promotions are advisable.
     AQI scale: 1=Good, 2=Fair, 3=Moderate, 4=Poor, 5=Very Poor.
+    Also returns a 3-hour AQI forecast (maximum AQI per block) when available.
     Args:
         lat: Latitude of the location
         lon: Longitude of the location
     """
-    return weather_api.get_air_quality(lat, lon)
+    return await _run_blocking(weather_api.get_air_quality, lat, lon)
 
 
 # MCP servers use stdio transport by default for local operation.

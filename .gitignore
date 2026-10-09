@@ -39,3 +39,12 @@ temp/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node.js gateway
+gateway/node_modules/
+gateway/dist/
+gateway/coverage/
+
+# Tooling caches and generated evaluation output
+.ruff_cache/
+eval-results/

@@ -3,131 +3,187 @@ title: ClearCast AI
 emoji: 🌦️
 colorFrom: blue
 colorTo: indigo
-sdk: gradio
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: false
 ---
 
 # ClearCast — Full-Stack Agentic AI App for Weather-Driven Marketing
 
-ClearCast turns live OpenWeatherMap conditions and forecasts into actionable marketing campaign recommendations. A LangGraph agent discovers weather tools through MCP, selects the data it needs, and recommends campaign windows, business-specific reasoning, ad copy, and risk mitigations rather than merely repeating a forecast.
+ClearCast turns live OpenWeatherMap forecasts into weather-timed campaign plans.
+A LangGraph agent running GPT-4o-mini discovers weather tools over MCP and
+gathers evidence. The model then drafts a structured plan, and deterministic
+Python code checks every cited forecast observation, every weather number, and
+every client rule before a human approves or rejects the plan.
+
+This is a portfolio project. The two demo clients are **fictional**
+configurations, not customer deployments, and nothing ClearCast produces is
+evidence of campaign lift or ROI.
+
+## What it does
+
+* **Four campaign inputs**: location, business type, campaign goal, and tone,
+  plus an optional client profile with editable hard constraints.
+* **Agentic weather retrieval**: LangGraph `chatbot → ToolNode → chatbot`, with
+  four MCP tools (`geocode_city`, `get_current_weather`, `get_forecast`,
+  `get_air_quality`) discovered at runtime and converted from JSON Schema to
+  Pydantic-backed `StructuredTool`s.
+* **Evidence-grounded plans**: a validated `CampaignPlan` whose windows cite
+  forecast observation IDs from *this* request. Python verifies times, values,
+  units, staleness, and hedged-hypothesis wording, with up to two repair
+  attempts. Plans that still fail are returned as **Validation Failed**.
+* **Client-configurable rules**: Demo Client A (Coffee Shop) and Demo Client B
+  (Outdoor Fitness Studio) are validated JSON configuration for one shared
+  agent. Python enforces the hard rules; the model cannot override them.
+* **Human-in-the-loop review**: Pending Review → Approved / Rejected. Approval is
+  bound to a plan hash, and editing the ad copy invalidates it. JSON and
+  Markdown export.
+* **Node.js + TypeScript + Fastify gateway**: the typed public API in front of
+  the Python orchestration service (validation, limits, request IDs, error
+  mapping, readiness, response-contract checks).
+* **Per-session isolation**: a server-generated session ID per browser session,
+  mapped to its own LangGraph thread.
 
 ## Architecture
 
 ```text
-User -> Gradio Frontend -> LangGraph Agent -> MCP Client Bridge -> MCP Server (FastMCP) -> OpenWeatherMap API
+Browser ─▶ Gradio UI (Python, :7860)
+             │ HTTP + client token + x-request-id
+             ▼
+           Fastify gateway (Node.js/TypeScript, 127.0.0.1:8787)
+             │ HTTP + internal token
+             ▼
+           FastAPI orchestrator (Python, 127.0.0.1:8001)
+             ├─ LangGraph + GPT-4o-mini (per-session MemorySaver thread)
+             │    └─ MCP-to-LangChain bridge ── stdio ──▶ FastMCP weather server ─▶ OpenWeatherMap
+             ├─ Evidence ledger + hard-constraint checks + grounding validation
+             └─ Review state (session-scoped, in memory)
 ```
 
-## Tech Stack
-
-| Component | Technology | Purpose |
+| Component | Technology | Responsibility |
 |---|---|---|
-| Frontend | Gradio Blocks | Campaign input form and Markdown results |
-| Agent | LangGraph + LangChain | Stateful LLM/tool-calling loop |
-| Model | OpenAI GPT-4o-mini | Weather-to-marketing analysis |
-| Tool bridge | MCP Python SDK + StructuredTool | MCP discovery and LangChain schema conversion |
-| Weather service | FastMCP + Requests | Documented tools and raw API calls |
-| Data source | OpenWeatherMap | Geocoding, weather, forecast, and air quality |
-| Configuration | python-dotenv | Local environment variable loading |
+| UI | Gradio Blocks | Brief, client rules, plan tabs, review, exports |
+| Gateway | Node.js 22, TypeScript (strict), Fastify 5, TypeBox, Ajv | Public contract, validation, 16 KiB body limit, rate limits, request IDs, error mapping, `/health`, `/ready` |
+| Orchestrator | FastAPI, Pydantic | Internal API, session locks, error envelopes |
+| Agent | LangGraph, LangChain, GPT-4o-mini | Tool-calling loop, structured drafting |
+| Tool bridge | MCP Python SDK | Runtime discovery, persistent stdio session, schema conversion |
+| Weather | FastMCP, httpx | Four tools; retries, 429 handling, units, evidence IDs, cache |
+| Process manager | `deploy/launcher.py` | Start order, readiness, restarts, least-privilege env, clean shutdown |
 
-## Prerequisites
+Details: [docs/architecture.md](docs/architecture.md).
 
-- Python 3.11+
-- [OpenWeatherMap API key](https://home.openweathermap.org/users/sign_up) (free tier)
-- [OpenAI API key](https://platform.openai.com/api-keys)
-- [LangSmith API key](https://smith.langchain.com/) (optional, for tracing)
+## Run locally
 
-## UI
-<img width="1035" height="679" alt="image" src="https://github.com/user-attachments/assets/a36044f8-ec5c-4340-ac43-edee0a9ae32e" />
+Prerequisites: Python 3.13, Node.js 22+, an
+[OpenAI API key](https://platform.openai.com/api-keys), and an
+[OpenWeatherMap key](https://home.openweathermap.org/users/sign_up) (free tier).
 
+```bash
+python -m venv .venv && . .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt -r requirements-dev.txt
+npm --prefix gateway ci && npm --prefix gateway run build
+cp .env.example .env                                # then add your keys
+python safe_env_check.py                            # prints key metadata, never values
+python app.py                                       # orchestrator + gateway + UI
+```
 
-## Setup
+Open http://127.0.0.1:7860. `python app.py` runs `deploy/launcher.py`, which
+generates per-boot internal tokens and passes provider secrets only to the
+orchestrator process.
 
-1. Clone the repository and enter its directory.
-2. Install dependencies:
+**Offline demo (no keys, synthetic weather):**
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python -m evaluation.fake_openai_server --port 8099 &
+CLEARCAST_WEATHER_FIXTURES=baseline_mild OPENAI_API_KEY=sk-offline-fixture-not-a-real-key \
+  OPENAI_BASE_URL=http://127.0.0.1:8099/v1 python app.py
+```
 
-3. Copy `.env.example` to `.env`, then replace the placeholders with your API keys.
-4. Check configuration metadata without printing key values:
+Plans made this way are labelled `OFFLINE FIXTURE DATA`.
 
-   ```bash
-   python safe_env_check.py
-   ```
+**Docker (same image as the Hugging Face Space):**
 
-5. Test the MCP server independently:
+```bash
+OPENAI_API_KEY=... OPENWEATHERMAP_API_KEY=... docker compose up --build
+```
 
-   ```bash
-   python test_mcp.py
-   ```
-
-6. Run the full application:
-
-   ```bash
-   python -m frontend.app
-   ```
-
-## Test MCP Server Standalone
-
-The MCP layer can be tested before starting LangGraph or Gradio. `test_mcp.py` launches `mcp_server.weather_server` in module mode over stdio, initializes an MCP client session, lists all four tools, and calls `geocode_city` with Baltimore.
+**Optional live MCP check** (calls OpenWeatherMap with your key):
 
 ```bash
 python test_mcp.py
 ```
 
-With a valid OpenWeatherMap key, expected output resembles:
+## API (gateway)
 
-```text
-Connecting to MCP Weather Server...
+| Method and path | Purpose |
+|---|---|
+| `POST /v1/campaign-plans` | Generate a validated plan: `{session_id, brief, client_id?, constraints?}` |
+| `POST /v1/campaign-plans/{request_id}/review` | Approve or reject: `{session_id, decision, plan_hash, note?}` |
+| `POST /v1/campaign-plans/{request_id}/revisions` | Edit ad copy (invalidates approval): `{session_id, base_plan_hash, ad_copy}` |
+| `GET /v1/schemas` | Request schemas (TypeBox) and the response contract (from Pydantic) |
+| `GET /health`, `GET /ready` | Liveness; readiness including the orchestrator's MCP tool discovery |
 
-Found 4 tools:
-  - geocode_city: Convert a city name to geographic coordinates...
-  - get_current_weather: Get current weather conditions...
-  - get_forecast: Get a 5-day weather forecast...
-  - get_air_quality: Get air quality index...
+All `/v1` routes require the trusted UI's client token. Errors use one envelope:
+`{"error": {"code", "message", "request_id", "retryable", "details"}}`.
+Contracts live in [`contracts/`](contracts/).
 
-Testing geocode_city('Baltimore')...
-Result: {"lat": 39.2904, "lon": -76.6122, ...}
+## Testing and evaluation
 
-All MCP server tests passed!
+```bash
+python -m pytest                      # 129 offline tests (mocked MCP/LangGraph/providers)
+python -m pytest -m integration       # 8 multi-process tests (Node gateway, launcher, MCP subprocess)
+npm --prefix gateway test             # 57 gateway tests
+python -m evaluation.run_eval         # 43 offline scenarios with independent rechecks
 ```
 
-## Project Structure
+The offline evaluation recorded 43/43 scenarios passing. Every recommended
+window (30) matched the raw fixture evidence, and every constrained window (20)
+satisfied its client's rules when rechecked independently; invalid outputs were
+rejected in 100% of the designed cases. These are deterministic software tests
+with scripted model outputs. They are **not** human evaluations of
+recommendation quality, and they are not evidence of campaign lift.
+See [docs/evaluation.md](docs/evaluation.md).
 
-```text
-.
-├── mcp_server/
-│   ├── __init__.py          # Weather MCP package
-│   ├── weather_api.py       # Raw OpenWeatherMap HTTP and response cleaning
-│   └── weather_server.py    # Four FastMCP weather tools
-├── agent/
-│   ├── __init__.py          # Agent package
-│   ├── weather_client.py    # MCP discovery and StructuredTool conversion
-│   ├── prompts.py           # Marketing analyst system prompt
-│   └── graph.py             # LangGraph tool-calling loop and memory
-├── frontend/
-│   ├── __init__.py          # Frontend package
-│   └── app.py               # Gradio Blocks application
-├── docs/
-│   ├── architecture.md      # Layers, state flow, and design decisions
-│   ├── prompts.md           # Agentic IDE prompt log template
-│   └── deployment.md        # Local and production deployment options
-├── .env.example             # Safe configuration template
-├── docker-compose.yml       # Deployment discussion configuration
-├── requirements.txt         # Python dependencies
-├── test_mcp.py              # Standalone MCP integration test
-└── README.md                # Setup and project guide
-```
-
-## How It Works
-
-The agent begins by asking MCP for its available tools and converts their JSON Schemas into Pydantic-backed LangChain `StructuredTool` objects. For a campaign request, GPT-4o-mini first geocodes the location and then loops through current weather, forecast, and—when relevant—air quality calls. LangGraph's `ToolNode` runs each request and returns the results to the model. The loop ends only when the model produces the requested marketing sections. `MemorySaver` keeps each `thread_id`'s conversation state between invocations.
-
-## Langsmith Tracing
-<img width="1035" height="538" alt="image" src="https://github.com/user-attachments/assets/bda33f75-6f32-4524-a55d-ef55d2b8b135" />
+CI (`.github/workflows/ci.yml`) runs lint, formatting, contract drift, the
+secret scan, tests, the evaluation, gateway typecheck/lint/tests, the
+integration suite, and a Docker build plus container smoke test, all without
+provider credentials.
 
 ## Deployment
 
-Locally, the MCP server uses stdio and is spawned as a Python subprocess by the agent. In production, the agent and MCP server can remain together in one container so stdio still works, or the MCP server can move to an HTTP transport for independent deployment and scaling. See [docs/deployment.md](docs/deployment.md) and `docker-compose.yml` for the tradeoffs and an illustrative service layout.
+The Hugging Face Space runs this repository's `Dockerfile` (Docker SDK,
+`app_port: 7860`). Only Gradio listens publicly; the gateway and orchestrator
+bind to 127.0.0.1 inside the container. Required Space secrets:
+`OPENAI_API_KEY`, `OPENWEATHERMAP_API_KEY`. Optional: `LANGCHAIN_API_KEY` with
+`LANGCHAIN_TRACING_V2=true`. See [docs/deployment.md](docs/deployment.md) for
+the deployment record and verification.
+
+## Project structure
+
+```text
+agent/            LangGraph graph, prompts, MCP bridge, evidence, validation, review, service
+agent/config/     Validated client profiles (fictional demo clients)
+api/              Internal FastAPI service and contract export
+contracts/        JSON Schemas generated from Pydantic + shared contract fixtures
+deploy/           Single-container process supervisor
+evaluation/       Scripted model, harness, scenarios, evaluation runner, results
+frontend/         Gradio UI, theme, gateway client
+gateway/          Node.js + TypeScript + Fastify gateway (src, tests)
+mcp_server/       FastMCP weather server, OpenWeatherMap client, offline fixtures
+scripts/          Secret scan and deployment smoke test
+tests/            pytest suites (unit, component, integration)
+```
+
+## Limitations
+
+* Session memory and review state are in-process: they are lost on restart and
+  are not shared across replicas. This is not durable or multi-tenant storage.
+* There is no user authentication. Sessions are unguessable IDs per browser
+  session, not user accounts.
+* Local times use the single UTC offset OpenWeatherMap reports; a DST change
+  inside the 5-day window can shift times by an hour.
+* AQI limits can be verified only where OpenWeatherMap provides an AQI forecast
+  (about 4 days); later blocks are ineligible for AQI-limited clients.
+* Marketing hypotheses are untested model text. No human evaluation of
+  recommendation usefulness has been performed.
+* Cost is not estimated unless current per-token prices are configured.

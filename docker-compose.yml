@@ -1,28 +1,16 @@
-# ClearCast Docker Compose Configuration
-# For deployment discussion purposes.
+# Local container run of the same image deployed to Hugging Face Spaces.
+# Only the Gradio port is published; the gateway and orchestrator stay on
+# the container's loopback interface.
 #
-# Note: In local development, the MCP server uses stdio transport
-# and is spawned as a subprocess by the agent. For Docker deployment,
-# we package the agent and MCP server together since stdio requires
-# them to be in the same process environment.
-
-version: "3.8"
-
+#   OPENAI_API_KEY=... OPENWEATHERMAP_API_KEY=... docker compose up --build
 services:
-  # Agent backend + MCP server in the same container
-  # because MCP stdio transport requires same process environment
-  agent-backend:
+  clearcast:
     build: .
-    environment:
-      - OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2}
-      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
-
-  # Frontend runs separately
-  frontend:
-    build: ./frontend
     ports:
       - "7860:7860"
-    depends_on:
-      - agent-backend
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?Set OPENAI_API_KEY}
+      OPENWEATHERMAP_API_KEY: ${OPENWEATHERMAP_API_KEY:?Set OPENWEATHERMAP_API_KEY}
+      LANGCHAIN_TRACING_V2: ${LANGCHAIN_TRACING_V2:-false}
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY:-}
+      LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT:-clearcast}

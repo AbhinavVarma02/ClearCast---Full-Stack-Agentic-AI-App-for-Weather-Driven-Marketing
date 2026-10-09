@@ -38,10 +38,7 @@ def main() -> None:
         f"{KEY_NAME} contains placeholder text: "
         f"{any(marker in stripped_value.casefold() for marker in PLACEHOLDER_MARKERS)}"
     )
-    print(
-        f"{KEY_NAME} has leading/trailing spaces: "
-        f"{raw_assignment != raw_assignment.strip()}"
-    )
+    print(f"{KEY_NAME} has leading/trailing spaces: {raw_assignment != raw_assignment.strip()}")
     print(f"{KEY_NAME} duplicate lines: {len(matching_lines) > 1}")
     print(f"{KEY_NAME} line count: {len(matching_lines)}")
 

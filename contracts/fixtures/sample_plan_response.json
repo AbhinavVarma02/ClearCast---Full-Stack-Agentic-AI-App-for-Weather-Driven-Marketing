@@ -1,0 +1,1045 @@
+{
+  "plan": {
+    "schema_version": "1.0",
+    "request_id": "sample-request-0001",
+    "session_ref": "6c9ef0f02844",
+    "revision": 1,
+    "plan_hash": "efaf1a8e3d88be64916d479bf44d795e8478e7263b37f0f4947bb8004a498e33",
+    "generated_at": "2030-04-04T01:30:00Z",
+    "updated_at": "2030-04-04T01:30:00Z",
+    "status": "pending_review",
+    "brief": {
+      "location": "Austin, TX",
+      "business_type": "Outdoor fitness studio",
+      "campaign_goal": "Promote outdoor class signups",
+      "tone": "Urgent"
+    },
+    "campaign_goal": "Promote outdoor class signups",
+    "client": {
+      "client_id": "demo_outdoor_fitness",
+      "display_name": "Demo Client B - Outdoor Fitness Studio (fictional)",
+      "fictional": true,
+      "business_objective": "Promote outdoor classes.",
+      "constraints": {
+        "allowed_hours": [
+          {
+            "start_hour": 6,
+            "end_hour": 9
+          },
+          {
+            "start_hour": 17,
+            "end_hour": 20
+          }
+        ],
+        "min_temperature_f": 45.0,
+        "max_temperature_f": 88.0,
+        "max_precipitation_probability_pct": 30.0,
+        "max_wind_speed_mph": 15.0,
+        "max_aqi": 2,
+        "exclusion_windows": []
+      },
+      "constraints_source": "profile_default",
+      "preferences": {
+        "preferred_conditions": "Dry, mild, low-wind mornings or evenings with good air quality.",
+        "promotion_ideas": [
+          "Sunrise bootcamp",
+          "After-work outdoor HIIT",
+          "Bring-a-friend outdoor class"
+        ],
+        "notes": "Outdoor classes only run when every hard constraint is satisfied."
+      }
+    },
+    "resolved_location": {
+      "name": "Austin",
+      "state": "TX",
+      "country": "US",
+      "lat": 39.702,
+      "lon": -102.8314,
+      "timezone_offset_seconds": -14400,
+      "timezone_label": "UTC-04:00",
+      "timezone_source": "OpenWeatherMap get_forecast timezone offset",
+      "observation_id": "geo-39.7020_-102.8314"
+    },
+    "strategy_summary": "Focus spend on the windows below; each is tied to cited forecast blocks.",
+    "windows": [
+      {
+        "window_id": "w1",
+        "title": "Thursday 06:00 outdoor fitness studio moment",
+        "daypart": "morning",
+        "start_local": "2030-04-04T06:00:00-04:00",
+        "end_local": "2030-04-04T09:00:00-04:00",
+        "start_utc": "2030-04-04T10:00:00Z",
+        "end_utc": "2030-04-04T13:00:00Z",
+        "observation_ids": [
+          "fc-20300404T0900Z",
+          "fc-20300404T1200Z"
+        ],
+        "evidence": [
+          {
+            "observation_id": "fc-20300404T0900Z",
+            "datetime_utc": "2030-04-04T09:00:00Z",
+            "datetime_local": "2030-04-04T05:00:00-04:00",
+            "temperature_f": 53.52,
+            "feels_like_f": 52.02,
+            "humidity_pct": 60.0,
+            "wind_speed_mph": 10.0,
+            "precipitation_probability_pct": 10.0,
+            "rain_volume_mm_3h": 0.0,
+            "description": "scattered clouds",
+            "aqi": 2,
+            "aqi_observation_id": "aqf-20300404T0900Z",
+            "missing_fields": []
+          },
+          {
+            "observation_id": "fc-20300404T1200Z",
+            "datetime_utc": "2030-04-04T12:00:00Z",
+            "datetime_local": "2030-04-04T08:00:00-04:00",
+            "temperature_f": 60.17,
+            "feels_like_f": 58.67,
+            "humidity_pct": 60.0,
+            "wind_speed_mph": 8.8,
+            "precipitation_probability_pct": 10.0,
+            "rain_volume_mm_3h": 0.0,
+            "description": "scattered clouds",
+            "aqi": 2,
+            "aqi_observation_id": "aqf-20300404T1200Z",
+            "missing_fields": []
+          }
+        ],
+        "observed_conditions": {
+          "temperature_min_f": 53.52,
+          "temperature_max_f": 60.17,
+          "feels_like_min_f": 52.02,
+          "precipitation_probability_max_pct": 10.0,
+          "wind_speed_max_mph": 10.0,
+          "rain_volume_total_mm": 0.0,
+          "aqi_max": 2,
+          "conditions": [
+            "scattered clouds"
+          ]
+        },
+        "claimed_conditions": {
+          "temperature_min_f": 53.5,
+          "temperature_max_f": 60.2,
+          "precipitation_probability_max_pct": 10.0,
+          "wind_speed_max_mph": 10.0,
+          "aqi_max": 2,
+          "conditions_summary": "scattered clouds"
+        },
+        "weather_reasoning": "Forecast shows 53.5°F with a 10% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.",
+        "marketing_hypothesis": "We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.",
+        "ad_copy": [
+          "Spots are limited, book now: scattered clouds ahead.",
+          "Make the most of Thursday 06:00."
+        ],
+        "risks": [
+          {
+            "risk": "Conditions can change before the window.",
+            "mitigation": "Recheck the forecast on the morning of the campaign.",
+            "observation_ids": [
+              "fc-20300404T0900Z"
+            ]
+          }
+        ],
+        "constraint_check": {
+          "eligible": true,
+          "violations": []
+        },
+        "grounding": {
+          "verified": true,
+          "issues": []
+        }
+      },
+      {
+        "window_id": "w2",
+        "title": "Friday 08:00 outdoor fitness studio moment",
+        "daypart": "morning",
+        "start_local": "2030-04-05T08:00:00-04:00",
+        "end_local": "2030-04-05T09:00:00-04:00",
+        "start_utc": "2030-04-05T12:00:00Z",
+        "end_utc": "2030-04-05T13:00:00Z",
+        "observation_ids": [
+          "fc-20300405T1200Z"
+        ],
+        "evidence": [
+          {
+            "observation_id": "fc-20300405T1200Z",
+            "datetime_utc": "2030-04-05T12:00:00Z",
+            "datetime_local": "2030-04-05T08:00:00-04:00",
+            "temperature_f": 60.17,
+            "feels_like_f": 58.67,
+            "humidity_pct": 60.0,
+            "wind_speed_mph": 8.8,
+            "precipitation_probability_pct": 20.0,
+            "rain_volume_mm_3h": 0.0,
+            "description": "scattered clouds",
+            "aqi": 2,
+            "aqi_observation_id": "aqf-20300405T1200Z",
+            "missing_fields": []
+          }
+        ],
+        "observed_conditions": {
+          "temperature_min_f": 60.17,
+          "temperature_max_f": 60.17,
+          "feels_like_min_f": 58.67,
+          "precipitation_probability_max_pct": 20.0,
+          "wind_speed_max_mph": 8.8,
+          "rain_volume_total_mm": 0.0,
+          "aqi_max": 2,
+          "conditions": [
+            "scattered clouds"
+          ]
+        },
+        "claimed_conditions": {
+          "temperature_min_f": 60.2,
+          "temperature_max_f": 60.2,
+          "precipitation_probability_max_pct": 20.0,
+          "wind_speed_max_mph": 8.8,
+          "aqi_max": 2,
+          "conditions_summary": "scattered clouds"
+        },
+        "weather_reasoning": "Forecast shows 60.2°F with a 20% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.",
+        "marketing_hypothesis": "We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.",
+        "ad_copy": [
+          "Spots are limited, book now: scattered clouds ahead.",
+          "Make the most of Friday 08:00."
+        ],
+        "risks": [
+          {
+            "risk": "Conditions can change before the window.",
+            "mitigation": "Recheck the forecast on the morning of the campaign.",
+            "observation_ids": [
+              "fc-20300405T1200Z"
+            ]
+          }
+        ],
+        "constraint_check": {
+          "eligible": true,
+          "violations": []
+        },
+        "grounding": {
+          "verified": true,
+          "issues": []
+        }
+      }
+    ],
+    "rejected_windows": [],
+    "risks": [],
+    "forecast_summary": [
+      {
+        "date_local": "2030-04-03",
+        "low_f": 51.9,
+        "high_f": 51.9,
+        "max_precipitation_probability_pct": 10.0,
+        "max_wind_speed_mph": 10.0,
+        "conditions": "scattered clouds",
+        "block_count": 1
+      },
+      {
+        "date_local": "2030-04-04",
+        "low_f": 50.1,
+        "high_f": 67.9,
+        "max_precipitation_probability_pct": 20.0,
+        "max_wind_speed_mph": 10.0,
+        "conditions": "scattered clouds",
+        "block_count": 8
+      },
+      {
+        "date_local": "2030-04-05",
+        "low_f": 50.1,
+        "high_f": 67.9,
+        "max_precipitation_probability_pct": 60.0,
+        "max_wind_speed_mph": 10.0,
+        "conditions": "scattered clouds",
+        "block_count": 8
+      },
+      {
+        "date_local": "2030-04-06",
+        "low_f": 50.1,
+        "high_f": 67.9,
+        "max_precipitation_probability_pct": 30.0,
+        "max_wind_speed_mph": 10.0,
+        "conditions": "scattered clouds",
+        "block_count": 8
+      },
+      {
+        "date_local": "2030-04-07",
+        "low_f": 50.1,
+        "high_f": 67.9,
+        "max_precipitation_probability_pct": 30.0,
+        "max_wind_speed_mph": 10.0,
+        "conditions": "scattered clouds",
+        "block_count": 8
+      },
+      {
+        "date_local": "2030-04-08",
+        "low_f": 50.1,
+        "high_f": 67.9,
+        "max_precipitation_probability_pct": 0.0,
+        "max_wind_speed_mph": 10.0,
+        "conditions": "scattered clouds",
+        "block_count": 7
+      }
+    ],
+    "evidence": {
+      "location": {
+        "name": "Austin",
+        "state": "TX",
+        "country": "US",
+        "lat": 39.702,
+        "lon": -102.8314,
+        "timezone_offset_seconds": -14400,
+        "timezone_label": "UTC-04:00",
+        "timezone_source": "OpenWeatherMap get_forecast timezone offset",
+        "observation_id": "geo-39.7020_-102.8314"
+      },
+      "forecast": [
+        {
+          "observation_id": "fc-20300404T0300Z",
+          "datetime_utc": "2030-04-04T03:00:00Z",
+          "datetime_local": "2030-04-03T23:00:00-04:00",
+          "temperature_f": 51.86,
+          "feels_like_f": 50.36,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T0300Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300404T0600Z",
+          "datetime_utc": "2030-04-04T06:00:00Z",
+          "datetime_local": "2030-04-04T02:00:00-04:00",
+          "temperature_f": 50.08,
+          "feels_like_f": 48.58,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T0600Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300404T0900Z",
+          "datetime_utc": "2030-04-04T09:00:00Z",
+          "datetime_local": "2030-04-04T05:00:00-04:00",
+          "temperature_f": 53.52,
+          "feels_like_f": 52.02,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T0900Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300404T1200Z",
+          "datetime_utc": "2030-04-04T12:00:00Z",
+          "datetime_local": "2030-04-04T08:00:00-04:00",
+          "temperature_f": 60.17,
+          "feels_like_f": 58.67,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T1200Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300404T1500Z",
+          "datetime_utc": "2030-04-04T15:00:00Z",
+          "datetime_local": "2030-04-04T11:00:00-04:00",
+          "temperature_f": 66.14,
+          "feels_like_f": 64.64,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T1500Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300404T1800Z",
+          "datetime_utc": "2030-04-04T18:00:00Z",
+          "datetime_local": "2030-04-04T14:00:00-04:00",
+          "temperature_f": 67.92,
+          "feels_like_f": 66.42,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T1800Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300404T2100Z",
+          "datetime_utc": "2030-04-04T21:00:00Z",
+          "datetime_local": "2030-04-04T17:00:00-04:00",
+          "temperature_f": 64.48,
+          "feels_like_f": 62.98,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300404T2100Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T0000Z",
+          "datetime_utc": "2030-04-05T00:00:00Z",
+          "datetime_local": "2030-04-04T20:00:00-04:00",
+          "temperature_f": 57.83,
+          "feels_like_f": 56.33,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 10.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T0000Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T0300Z",
+          "datetime_utc": "2030-04-05T03:00:00Z",
+          "datetime_local": "2030-04-04T23:00:00-04:00",
+          "temperature_f": 51.86,
+          "feels_like_f": 50.36,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 20.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T0300Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T0600Z",
+          "datetime_utc": "2030-04-05T06:00:00Z",
+          "datetime_local": "2030-04-05T02:00:00-04:00",
+          "temperature_f": 50.08,
+          "feels_like_f": 48.58,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 20.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T0600Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T0900Z",
+          "datetime_utc": "2030-04-05T09:00:00Z",
+          "datetime_local": "2030-04-05T05:00:00-04:00",
+          "temperature_f": 53.52,
+          "feels_like_f": 52.02,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 20.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T0900Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T1200Z",
+          "datetime_utc": "2030-04-05T12:00:00Z",
+          "datetime_local": "2030-04-05T08:00:00-04:00",
+          "temperature_f": 60.17,
+          "feels_like_f": 58.67,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 20.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T1200Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T1500Z",
+          "datetime_utc": "2030-04-05T15:00:00Z",
+          "datetime_local": "2030-04-05T11:00:00-04:00",
+          "temperature_f": 66.14,
+          "feels_like_f": 64.64,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 20.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T1500Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T1800Z",
+          "datetime_utc": "2030-04-05T18:00:00Z",
+          "datetime_local": "2030-04-05T14:00:00-04:00",
+          "temperature_f": 67.92,
+          "feels_like_f": 66.42,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 60.0,
+          "rain_volume_mm_3h": 0.8,
+          "description": "light rain",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T1800Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300405T2100Z",
+          "datetime_utc": "2030-04-05T21:00:00Z",
+          "datetime_local": "2030-04-05T17:00:00-04:00",
+          "temperature_f": 64.48,
+          "feels_like_f": 62.98,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 60.0,
+          "rain_volume_mm_3h": 0.8,
+          "description": "light rain",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300405T2100Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T0000Z",
+          "datetime_utc": "2030-04-06T00:00:00Z",
+          "datetime_local": "2030-04-05T20:00:00-04:00",
+          "temperature_f": 57.83,
+          "feels_like_f": 56.33,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 20.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T0000Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T0300Z",
+          "datetime_utc": "2030-04-06T03:00:00Z",
+          "datetime_local": "2030-04-05T23:00:00-04:00",
+          "temperature_f": 51.86,
+          "feels_like_f": 50.36,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T0300Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T0600Z",
+          "datetime_utc": "2030-04-06T06:00:00Z",
+          "datetime_local": "2030-04-06T02:00:00-04:00",
+          "temperature_f": 50.08,
+          "feels_like_f": 48.58,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T0600Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T0900Z",
+          "datetime_utc": "2030-04-06T09:00:00Z",
+          "datetime_local": "2030-04-06T05:00:00-04:00",
+          "temperature_f": 53.52,
+          "feels_like_f": 52.02,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T0900Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T1200Z",
+          "datetime_utc": "2030-04-06T12:00:00Z",
+          "datetime_local": "2030-04-06T08:00:00-04:00",
+          "temperature_f": 60.17,
+          "feels_like_f": 58.67,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T1200Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T1500Z",
+          "datetime_utc": "2030-04-06T15:00:00Z",
+          "datetime_local": "2030-04-06T11:00:00-04:00",
+          "temperature_f": 66.14,
+          "feels_like_f": 64.64,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T1500Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T1800Z",
+          "datetime_utc": "2030-04-06T18:00:00Z",
+          "datetime_local": "2030-04-06T14:00:00-04:00",
+          "temperature_f": 67.92,
+          "feels_like_f": 66.42,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T1800Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300406T2100Z",
+          "datetime_utc": "2030-04-06T21:00:00Z",
+          "datetime_local": "2030-04-06T17:00:00-04:00",
+          "temperature_f": 64.48,
+          "feels_like_f": 62.98,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300406T2100Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T0000Z",
+          "datetime_utc": "2030-04-07T00:00:00Z",
+          "datetime_local": "2030-04-06T20:00:00-04:00",
+          "temperature_f": 57.83,
+          "feels_like_f": 56.33,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 5.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T0000Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T0300Z",
+          "datetime_utc": "2030-04-07T03:00:00Z",
+          "datetime_local": "2030-04-06T23:00:00-04:00",
+          "temperature_f": 51.86,
+          "feels_like_f": 50.36,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T0300Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T0600Z",
+          "datetime_utc": "2030-04-07T06:00:00Z",
+          "datetime_local": "2030-04-07T02:00:00-04:00",
+          "temperature_f": 50.08,
+          "feels_like_f": 48.58,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T0600Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T0900Z",
+          "datetime_utc": "2030-04-07T09:00:00Z",
+          "datetime_local": "2030-04-07T05:00:00-04:00",
+          "temperature_f": 53.52,
+          "feels_like_f": 52.02,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T0900Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T1200Z",
+          "datetime_utc": "2030-04-07T12:00:00Z",
+          "datetime_local": "2030-04-07T08:00:00-04:00",
+          "temperature_f": 60.17,
+          "feels_like_f": 58.67,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T1200Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T1500Z",
+          "datetime_utc": "2030-04-07T15:00:00Z",
+          "datetime_local": "2030-04-07T11:00:00-04:00",
+          "temperature_f": 66.14,
+          "feels_like_f": 64.64,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T1500Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T1800Z",
+          "datetime_utc": "2030-04-07T18:00:00Z",
+          "datetime_local": "2030-04-07T14:00:00-04:00",
+          "temperature_f": 67.92,
+          "feels_like_f": 66.42,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T1800Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300407T2100Z",
+          "datetime_utc": "2030-04-07T21:00:00Z",
+          "datetime_local": "2030-04-07T17:00:00-04:00",
+          "temperature_f": 64.48,
+          "feels_like_f": 62.98,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300407T2100Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T0000Z",
+          "datetime_utc": "2030-04-08T00:00:00Z",
+          "datetime_local": "2030-04-07T20:00:00-04:00",
+          "temperature_f": 57.83,
+          "feels_like_f": 56.33,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 30.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": 2,
+          "aqi_observation_id": "aqf-20300408T0000Z",
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T0300Z",
+          "datetime_utc": "2030-04-08T03:00:00Z",
+          "datetime_local": "2030-04-07T23:00:00-04:00",
+          "temperature_f": 51.86,
+          "feels_like_f": 50.36,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T0600Z",
+          "datetime_utc": "2030-04-08T06:00:00Z",
+          "datetime_local": "2030-04-08T02:00:00-04:00",
+          "temperature_f": 50.08,
+          "feels_like_f": 48.58,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T0900Z",
+          "datetime_utc": "2030-04-08T09:00:00Z",
+          "datetime_local": "2030-04-08T05:00:00-04:00",
+          "temperature_f": 53.52,
+          "feels_like_f": 52.02,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T1200Z",
+          "datetime_utc": "2030-04-08T12:00:00Z",
+          "datetime_local": "2030-04-08T08:00:00-04:00",
+          "temperature_f": 60.17,
+          "feels_like_f": 58.67,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T1500Z",
+          "datetime_utc": "2030-04-08T15:00:00Z",
+          "datetime_local": "2030-04-08T11:00:00-04:00",
+          "temperature_f": 66.14,
+          "feels_like_f": 64.64,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T1800Z",
+          "datetime_utc": "2030-04-08T18:00:00Z",
+          "datetime_local": "2030-04-08T14:00:00-04:00",
+          "temperature_f": 67.92,
+          "feels_like_f": 66.42,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300408T2100Z",
+          "datetime_utc": "2030-04-08T21:00:00Z",
+          "datetime_local": "2030-04-08T17:00:00-04:00",
+          "temperature_f": 64.48,
+          "feels_like_f": 62.98,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 10.0,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        },
+        {
+          "observation_id": "fc-20300409T0000Z",
+          "datetime_utc": "2030-04-09T00:00:00Z",
+          "datetime_local": "2030-04-08T20:00:00-04:00",
+          "temperature_f": 57.83,
+          "feels_like_f": 56.33,
+          "humidity_pct": 60.0,
+          "wind_speed_mph": 8.8,
+          "precipitation_probability_pct": 0.0,
+          "rain_volume_mm_3h": 0.0,
+          "description": "scattered clouds",
+          "aqi": null,
+          "aqi_observation_id": null,
+          "missing_fields": []
+        }
+      ],
+      "current": {
+        "observation_id": "cw-20300404T0120Z",
+        "observed_at_utc": "2030-04-04T01:20:00Z",
+        "temperature_f": 55.56,
+        "feels_like_f": 54.06,
+        "humidity_pct": 60.0,
+        "wind_speed_mph": 9.2,
+        "cloud_cover_pct": 40.0,
+        "description": "scattered clouds",
+        "missing_fields": []
+      },
+      "air_quality": {
+        "observation_id": "aqc-20300404T0100Z",
+        "observed_at_utc": "2030-04-04T01:00:00Z",
+        "aqi": 2,
+        "pm2_5_ugm3": 8.4,
+        "pm10_ugm3": 14.2,
+        "o3_ugm3": 61.0,
+        "forecast_available": true,
+        "forecast_block_count": 33
+      },
+      "sources": [
+        {
+          "tool": "geocode_city",
+          "status": "ok",
+          "source": "fixture:baseline_mild",
+          "fetched_at_utc": "2030-04-04T01:30:00Z",
+          "cache_hit": false,
+          "cache_age_seconds": 0,
+          "error_category": null
+        },
+        {
+          "tool": "get_forecast",
+          "status": "ok",
+          "source": "fixture:baseline_mild",
+          "fetched_at_utc": "2030-04-04T01:30:00Z",
+          "cache_hit": false,
+          "cache_age_seconds": 0,
+          "error_category": null
+        },
+        {
+          "tool": "get_current_weather",
+          "status": "ok",
+          "source": "fixture:baseline_mild",
+          "fetched_at_utc": "2030-04-04T01:30:00Z",
+          "cache_hit": false,
+          "cache_age_seconds": 0,
+          "error_category": null
+        },
+        {
+          "tool": "get_air_quality",
+          "status": "ok",
+          "source": "fixture:baseline_mild",
+          "fetched_at_utc": "2030-04-04T01:30:00Z",
+          "cache_hit": false,
+          "cache_age_seconds": 0,
+          "error_category": null
+        }
+      ],
+      "units": {
+        "temperature": "°F",
+        "wind_speed": "mph",
+        "precipitation_probability": "% (0-100)",
+        "rain_volume": "mm per 3-hour block",
+        "humidity": "%",
+        "aqi": "OpenWeatherMap AQI 1-5 (1=Good, 5=Very Poor)",
+        "time": "local times use the UTC offset OpenWeatherMap reports for the resolved location"
+      },
+      "issues": []
+    },
+    "analyst_notes": "Analyst notes: mornings and evenings stand out; see the forecast blocks for details.",
+    "validation": {
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "repair_attempts": 0,
+      "drafting_attempted": true,
+      "checked_at": "2030-04-04T01:30:00Z"
+    },
+    "review": {
+      "status": "pending_review",
+      "decided_at": null,
+      "note": null,
+      "approved_plan_hash": null,
+      "history": [
+        {
+          "at": "2030-04-04T01:30:00Z",
+          "action": "generated",
+          "from_status": null,
+          "to_status": "draft",
+          "revision": 1,
+          "plan_hash": null,
+          "note": null
+        },
+        {
+          "at": "2030-04-04T01:30:00Z",
+          "action": "validated",
+          "from_status": "draft",
+          "to_status": "pending_review",
+          "revision": 1,
+          "plan_hash": "efaf1a8e3d88be64916d479bf44d795e8478e7263b37f0f4947bb8004a498e33",
+          "note": null
+        }
+      ]
+    },
+    "diagnostics": {
+      "request_id": "sample-request-0001",
+      "session_ref": "6c9ef0f02844",
+      "client_id": "demo_outdoor_fitness",
+      "model": "gpt-4o-mini",
+      "duration_ms": 0,
+      "graph_duration_ms": 0,
+      "drafting_duration_ms": 0,
+      "llm_calls": 4,
+      "tool_calls": {
+        "geocode_city": 1,
+        "get_forecast": 1,
+        "get_current_weather": 1,
+        "get_air_quality": 1
+      },
+      "tool_errors": 0,
+      "provider_error_categories": [],
+      "cache_hits": 0,
+      "repair_attempts": 0,
+      "recursion_limit": 10,
+      "step_limit_reached": false,
+      "validation_status": "passed",
+      "review_status": "pending_review",
+      "token_usage": {
+        "input_tokens": 9219,
+        "output_tokens": 731,
+        "total_tokens": 9950,
+        "calls_with_usage": 4,
+        "calls_without_usage": 0
+      },
+      "estimated_cost_usd": null,
+      "cost_note": "Not calculated: model prices are not configured."
+    },
+    "disclaimers": [
+      "OFFLINE FIXTURE DATA: synthetic weather used for testing, not real conditions.",
+      "Demo Client B - Outdoor Fitness Studio (fictional) is a fictional demo configuration, not a real customer.",
+      "Marketing hypotheses are untested; nothing here is evidence of demand, campaign lift, or ROI.",
+      "ClearCast does not publish advertisements or make external business transactions.",
+      "Forecasts change; weather values reflect the fetch times listed in the evidence."
+    ]
+  },
+  "report_markdown": "> **Status: Pending Review** — Validated against retrieved weather evidence. Awaiting human review.\n>\n> Client: Demo Client B - Outdoor Fitness Studio (fictional) · Location: Austin, TX (UTC-04:00) · Request `sample-request-0001` · Revision 1\n\n## Recommended Campaign Windows\n\nFocus spend on the windows below; each is tied to cited forecast blocks.\n\n| # | Window (local time) | Daypart | Temp °F | Precip. prob. | Wind mph | AQI | Evidence |\n|---|---|---|---|---|---|---|---|\n| w1 | Thu Apr 04, 06:00–09:00 | morning | 53.5–60.2 | 10% | 10.0 | 2 | `fc-20300404T0900Z`, `fc-20300404T1200Z` |\n| w2 | Fri Apr 05, 08:00–09:00 | morning | 60.2–60.2 | 20% | 8.8 | 2 | `fc-20300405T1200Z` |\n\n## Weather-Driven Reasoning\n\n**w1 · Thursday 06:00 outdoor fitness studio moment**\n\n- Weather reasoning: Forecast shows 53.5°F with a 10% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.\n- Marketing hypothesis (unverified): We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.\n\n**w2 · Friday 08:00 outdoor fitness studio moment**\n\n- Weather reasoning: Forecast shows 60.2°F with a 20% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.\n- Marketing hypothesis (unverified): We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.\n\n## Suggested Ad Copy\n\n**w1 · Thursday 06:00 outdoor fitness studio moment**\n\n- “Spots are limited, book now: scattered clouds ahead.”\n- “Make the most of Thursday 06:00.”\n\n**w2 · Friday 08:00 outdoor fitness studio moment**\n\n- “Spots are limited, book now: scattered clouds ahead.”\n- “Make the most of Friday 08:00.”\n\n## Risk Notes\n\n- [w1] **Conditions can change before the window.** — Mitigation: Recheck the forecast on the morning of the campaign. (evidence: fc-20300404T0900Z)\n- [w2] **Conditions can change before the window.** — Mitigation: Recheck the forecast on the morning of the campaign. (evidence: fc-20300405T1200Z)\n\n## Forecast Summary\n\n| Date (local) | Low °F | High °F | Max precip. prob. | Max wind mph | Conditions |\n|---|---|---|---|---|---|\n| 2030-04-03 | 51.9 | 51.9 | 10% | 10.0 | scattered clouds |\n| 2030-04-04 | 50.1 | 67.9 | 20% | 10.0 | scattered clouds |\n| 2030-04-05 | 50.1 | 67.9 | 60% | 10.0 | scattered clouds |\n| 2030-04-06 | 50.1 | 67.9 | 30% | 10.0 | scattered clouds |\n| 2030-04-07 | 50.1 | 67.9 | 30% | 10.0 | scattered clouds |\n| 2030-04-08 | 50.1 | 67.9 | 0% | 10.0 | scattered clouds |\n\n## Validation & Review\n\n- Validation: **passed** (0 errors, 0 warnings, 0 repair attempts)\n- Review status: **Pending Review**\n\n---\n\n*OFFLINE FIXTURE DATA: synthetic weather used for testing, not real conditions.*\n*Demo Client B - Outdoor Fitness Studio (fictional) is a fictional demo configuration, not a real customer.*\n*Marketing hypotheses are untested; nothing here is evidence of demand, campaign lift, or ROI.*\n*ClearCast does not publish advertisements or make external business transactions.*\n*Forecasts change; weather values reflect the fetch times listed in the evidence.*"
+}
