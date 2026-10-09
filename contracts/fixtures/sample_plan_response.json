@@ -4,7 +4,7 @@
     "request_id": "sample-request-0001",
     "session_ref": "6c9ef0f02844",
     "revision": 1,
-    "plan_hash": "efaf1a8e3d88be64916d479bf44d795e8478e7263b37f0f4947bb8004a498e33",
+    "plan_hash": "d4f5e2a148fd0a55b84dfb7369812304816fbfa61a158f3a5f6c354abb0736a8",
     "generated_at": "2030-04-04T01:30:00Z",
     "updated_at": "2030-04-04T01:30:00Z",
     "status": "pending_review",
@@ -119,11 +119,22 @@
           ]
         },
         "claimed_conditions": {
-          "temperature_min_f": 53.5,
-          "temperature_max_f": 60.2,
-          "precipitation_probability_max_pct": 10.0,
-          "wind_speed_max_mph": 10.0,
-          "aqi_max": 2,
+          "cited_values": [
+            {
+              "observation_id": "fc-20300404T0900Z",
+              "temperature_f": 53.5,
+              "precipitation_probability_pct": 10.0,
+              "wind_speed_mph": 10.0,
+              "aqi": 2
+            },
+            {
+              "observation_id": "fc-20300404T1200Z",
+              "temperature_f": 60.2,
+              "precipitation_probability_pct": 10.0,
+              "wind_speed_mph": 8.8,
+              "aqi": 2
+            }
+          ],
           "conditions_summary": "scattered clouds"
         },
         "weather_reasoning": "Forecast shows 53.5°F with a 10% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.",
@@ -191,11 +202,15 @@
           ]
         },
         "claimed_conditions": {
-          "temperature_min_f": 60.2,
-          "temperature_max_f": 60.2,
-          "precipitation_probability_max_pct": 20.0,
-          "wind_speed_max_mph": 8.8,
-          "aqi_max": 2,
+          "cited_values": [
+            {
+              "observation_id": "fc-20300405T1200Z",
+              "temperature_f": 60.2,
+              "precipitation_probability_pct": 20.0,
+              "wind_speed_mph": 8.8,
+              "aqi": 2
+            }
+          ],
           "conditions_summary": "scattered clouds"
         },
         "weather_reasoning": "Forecast shows 60.2°F with a 20% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.",
@@ -995,7 +1010,7 @@
           "from_status": "draft",
           "to_status": "pending_review",
           "revision": 1,
-          "plan_hash": "efaf1a8e3d88be64916d479bf44d795e8478e7263b37f0f4947bb8004a498e33",
+          "plan_hash": "d4f5e2a148fd0a55b84dfb7369812304816fbfa61a158f3a5f6c354abb0736a8",
           "note": null
         }
       ]
@@ -1024,9 +1039,9 @@
       "validation_status": "passed",
       "review_status": "pending_review",
       "token_usage": {
-        "input_tokens": 9219,
-        "output_tokens": 731,
-        "total_tokens": 9950,
+        "input_tokens": 9291,
+        "output_tokens": 778,
+        "total_tokens": 10069,
         "calls_with_usage": 4,
         "calls_without_usage": 0
       },
@@ -1041,5 +1056,5 @@
       "Forecasts change; weather values reflect the fetch times listed in the evidence."
     ]
   },
-  "report_markdown": "> **Status: Pending Review** — Validated against retrieved weather evidence. Awaiting human review.\n>\n> Client: Demo Client B - Outdoor Fitness Studio (fictional) · Location: Austin, TX (UTC-04:00) · Request `sample-request-0001` · Revision 1\n\n## Recommended Campaign Windows\n\nFocus spend on the windows below; each is tied to cited forecast blocks.\n\n| # | Window (local time) | Daypart | Temp °F | Precip. prob. | Wind mph | AQI | Evidence |\n|---|---|---|---|---|---|---|---|\n| w1 | Thu Apr 04, 06:00–09:00 | morning | 53.5–60.2 | 10% | 10.0 | 2 | `fc-20300404T0900Z`, `fc-20300404T1200Z` |\n| w2 | Fri Apr 05, 08:00–09:00 | morning | 60.2–60.2 | 20% | 8.8 | 2 | `fc-20300405T1200Z` |\n\n## Weather-Driven Reasoning\n\n**w1 · Thursday 06:00 outdoor fitness studio moment**\n\n- Weather reasoning: Forecast shows 53.5°F with a 10% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.\n- Marketing hypothesis (unverified): We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.\n\n**w2 · Friday 08:00 outdoor fitness studio moment**\n\n- Weather reasoning: Forecast shows 60.2°F with a 20% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.\n- Marketing hypothesis (unverified): We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.\n\n## Suggested Ad Copy\n\n**w1 · Thursday 06:00 outdoor fitness studio moment**\n\n- “Spots are limited, book now: scattered clouds ahead.”\n- “Make the most of Thursday 06:00.”\n\n**w2 · Friday 08:00 outdoor fitness studio moment**\n\n- “Spots are limited, book now: scattered clouds ahead.”\n- “Make the most of Friday 08:00.”\n\n## Risk Notes\n\n- [w1] **Conditions can change before the window.** — Mitigation: Recheck the forecast on the morning of the campaign. (evidence: fc-20300404T0900Z)\n- [w2] **Conditions can change before the window.** — Mitigation: Recheck the forecast on the morning of the campaign. (evidence: fc-20300405T1200Z)\n\n## Forecast Summary\n\n| Date (local) | Low °F | High °F | Max precip. prob. | Max wind mph | Conditions |\n|---|---|---|---|---|---|\n| 2030-04-03 | 51.9 | 51.9 | 10% | 10.0 | scattered clouds |\n| 2030-04-04 | 50.1 | 67.9 | 20% | 10.0 | scattered clouds |\n| 2030-04-05 | 50.1 | 67.9 | 60% | 10.0 | scattered clouds |\n| 2030-04-06 | 50.1 | 67.9 | 30% | 10.0 | scattered clouds |\n| 2030-04-07 | 50.1 | 67.9 | 30% | 10.0 | scattered clouds |\n| 2030-04-08 | 50.1 | 67.9 | 0% | 10.0 | scattered clouds |\n\n## Validation & Review\n\n- Validation: **passed** (0 errors, 0 warnings, 0 repair attempts)\n- Review status: **Pending Review**\n\n---\n\n*OFFLINE FIXTURE DATA: synthetic weather used for testing, not real conditions.*\n*Demo Client B - Outdoor Fitness Studio (fictional) is a fictional demo configuration, not a real customer.*\n*Marketing hypotheses are untested; nothing here is evidence of demand, campaign lift, or ROI.*\n*ClearCast does not publish advertisements or make external business transactions.*\n*Forecasts change; weather values reflect the fetch times listed in the evidence.*"
+  "report_markdown": "> **Status: Pending Review** — Validated against retrieved weather evidence. Awaiting human review.\n>\n> Client: Demo Client B - Outdoor Fitness Studio (fictional) · Location: Austin, TX (UTC-04:00) · Request `sample-request-0001` · Revision 1\n\n## Recommended Campaign Windows\n\nFocus spend on the windows below; each is tied to cited forecast blocks.\n\n| # | Window (local time) | Conditions from cited evidence | Evidence |\n|---|---|---|---|\n| w1 | Thu Apr 04, 06:00–09:00 (morning) | 53.5–60.2 °F · precip. prob. ≤ 10% · wind ≤ 10.0 mph · AQI ≤ 2 | `fc-20300404T0900Z`, `fc-20300404T1200Z` |\n| w2 | Fri Apr 05, 08:00–09:00 (morning) | 60.2–60.2 °F · precip. prob. ≤ 20% · wind ≤ 8.8 mph · AQI ≤ 2 | `fc-20300405T1200Z` |\n\n## Weather-Driven Reasoning\n\n**w1 · Thursday 06:00 outdoor fitness studio moment**\n\n- Weather reasoning: Forecast shows 53.5°F with a 10% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.\n- Marketing hypothesis (unverified): We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.\n\n**w2 · Friday 08:00 outdoor fitness studio moment**\n\n- Weather reasoning: Forecast shows 60.2°F with a 20% chance of rain and scattered clouds, which fits the outdoor fitness studio brief.\n- Marketing hypothesis (unverified): We hypothesize that scattered clouds at this time may prompt more visits to a outdoor fitness studio.\n\n## Suggested Ad Copy\n\n**w1 · Thursday 06:00 outdoor fitness studio moment**\n\n- “Spots are limited, book now: scattered clouds ahead.”\n- “Make the most of Thursday 06:00.”\n\n**w2 · Friday 08:00 outdoor fitness studio moment**\n\n- “Spots are limited, book now: scattered clouds ahead.”\n- “Make the most of Friday 08:00.”\n\n## Risk Notes\n\n- [w1] **Conditions can change before the window.** — Mitigation: Recheck the forecast on the morning of the campaign. (evidence: fc-20300404T0900Z)\n- [w2] **Conditions can change before the window.** — Mitigation: Recheck the forecast on the morning of the campaign. (evidence: fc-20300405T1200Z)\n\n## Forecast Summary\n\n| Date (local) | Low °F | High °F | Max precip. prob. | Max wind mph | Conditions |\n|---|---|---|---|---|---|\n| 2030-04-03 | 51.9 | 51.9 | 10% | 10.0 | scattered clouds |\n| 2030-04-04 | 50.1 | 67.9 | 20% | 10.0 | scattered clouds |\n| 2030-04-05 | 50.1 | 67.9 | 60% | 10.0 | scattered clouds |\n| 2030-04-06 | 50.1 | 67.9 | 30% | 10.0 | scattered clouds |\n| 2030-04-07 | 50.1 | 67.9 | 30% | 10.0 | scattered clouds |\n| 2030-04-08 | 50.1 | 67.9 | 0% | 10.0 | scattered clouds |\n\n## Validation & Review\n\n- Validation: **passed** (0 errors, 0 warnings, 0 repair attempts)\n- Review status: **Pending Review**\n\n---\n\n*OFFLINE FIXTURE DATA: synthetic weather used for testing, not real conditions.*\n*Demo Client B - Outdoor Fitness Studio (fictional) is a fictional demo configuration, not a real customer.*\n*Marketing hypotheses are untested; nothing here is evidence of demand, campaign lift, or ROI.*\n*ClearCast does not publish advertisements or make external business transactions.*\n*Forecasts change; weather values reflect the fetch times listed in the evidence.*"
 }

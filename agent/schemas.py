@@ -168,18 +168,22 @@ class RevisionRequest(RequestModel):
 # Model-proposed draft (structured output). No defaults: OpenAI strict mode
 # requires every property, and None means "no claim made".
 # --------------------------------------------------------------------------
+class CitedValue(StrictModel):
+    """The model restates the values it relied on for one cited block; Python checks each one."""
+
+    observation_id: str = Field(description="ID of one forecast block cited by this window.")
+    temperature_f: float | None = Field(description="That block's temperature in °F, copied from its row.")
+    precipitation_probability_pct: float | None = Field(
+        description="That block's precipitation probability in PERCENT (0-100), copied from its row."
+    )
+    wind_speed_mph: float | None = Field(description="That block's wind speed in mph, copied from its row.")
+    aqi: int | None = Field(description="That block's AQI (1-5) copied from its row, or null if the row shows n/a.")
+
+
 class ClaimedConditions(StrictModel):
-    temperature_min_f: float | None = Field(
-        description="Lowest temperature (°F) across the cited forecast blocks, copied from evidence."
+    cited_values: list[CitedValue] = Field(
+        description="Exactly one entry per cited forecast block, with values copied from the evidence table."
     )
-    temperature_max_f: float | None = Field(
-        description="Highest temperature (°F) across the cited forecast blocks, copied from evidence."
-    )
-    precipitation_probability_max_pct: float | None = Field(
-        description="Highest precipitation probability across cited blocks, in PERCENT (0-100)."
-    )
-    wind_speed_max_mph: float | None = Field(description="Highest wind speed (mph) across the cited blocks, or null.")
-    aqi_max: int | None = Field(description="Highest AQI (1-5) across the cited blocks from the AQI forecast, or null.")
     conditions_summary: str = Field(description="Short description of the cited conditions.")
 
 

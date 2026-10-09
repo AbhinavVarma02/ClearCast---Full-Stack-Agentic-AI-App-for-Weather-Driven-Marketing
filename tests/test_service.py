@@ -218,3 +218,15 @@ async def test_ad_copy_revisions_are_validated(weather, make_service):
             plan.request_id,
             RevisionRequest(session_id=SESSION_A, base_plan_hash=plan.plan_hash, ad_copy={"w9": ["Unknown window"]}),
         )
+
+
+async def test_a_window_that_keeps_failing_is_rejected_while_verified_windows_survive(weather, make_service):
+    weather("baseline_mild")
+    fake = ScriptedOpenAI(draft_policies=["first:invented_id"])
+    plan = (await make_service(fake).create_plan(plan_request(), request_id="req-partial-1")).plan
+    assert plan.status == ReviewStatus.PENDING_REVIEW and plan.validation.repair_attempts == 2
+    assert plan.windows and all(w.grounding.verified for w in plan.windows)
+    assert [w.window_id for w in plan.rejected_windows] == ["w1"]
+    assert "fc-20991231T0000Z" not in {oid for w in plan.windows for oid in w.observation_ids}
+    rejected = [w for w in plan.validation.warnings if w.code == "unknown_observation"]
+    assert rejected and rejected[0].message.startswith("Rejected window:")

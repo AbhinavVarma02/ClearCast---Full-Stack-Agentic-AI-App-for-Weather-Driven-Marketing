@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-09T02:07:19+00:00",
+  "generated_at": "2026-10-09T02:19:36+00:00",
   "environment": {
     "python": "3.13.2",
     "platform": "Windows-11-10.0.26200-SP0"
   },
-  "duration_seconds": 1.49,
+  "duration_seconds": 1.64,
   "metrics": {
-    "scenarios": 43,
+    "scenarios": 45,
     "scenario_pass_rate": 1.0,
     "schema_validity_rate": 1.0,
     "forecast_grounding_consistency": 1.0,
@@ -15,7 +15,7 @@
     "repair_success_rate": 1.0,
     "session_isolation_correctness": 1.0,
     "api_contract_correctness": 1.0,
-    "recommended_windows_checked": 30,
+    "recommended_windows_checked": 32,
     "constrained_windows_checked": 20
   },
   "contract_mismatches": [],
@@ -342,6 +342,40 @@
       "transient_invalid": true,
       "rejected": null,
       "repaired": true
+    },
+    {
+      "name": "partial_invented_id_window_rejected",
+      "category": "invalid_output",
+      "description": "One window cites an invented ID on every attempt; verified windows survive, the bad one is rejected.",
+      "passed": true,
+      "outcome": "pending_review",
+      "failures": [],
+      "windows": 1,
+      "grounded_windows": 1,
+      "compliant_windows": 0,
+      "constrained_windows": 0,
+      "schema_valid": true,
+      "designed_invalid": true,
+      "transient_invalid": false,
+      "rejected": true,
+      "repaired": null
+    },
+    {
+      "name": "partial_value_mismatch_window_rejected",
+      "category": "invalid_output",
+      "description": "One window restates a temperature 15 F off on every attempt.",
+      "passed": true,
+      "outcome": "pending_review",
+      "failures": [],
+      "windows": 1,
+      "grounded_windows": 1,
+      "compliant_windows": 0,
+      "constrained_windows": 0,
+      "schema_valid": true,
+      "designed_invalid": true,
+      "transient_invalid": false,
+      "rejected": true,
+      "repaired": null
     },
     {
       "name": "unsupported_evidence_persistent",

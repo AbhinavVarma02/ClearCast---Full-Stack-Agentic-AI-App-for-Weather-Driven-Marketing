@@ -42,24 +42,25 @@ def find_block(ledger: EvidenceLedger, day: int, hour: int):
 
 
 def window(ledger: EvidenceLedger, blocks, start: datetime | None = None, end: datetime | None = None, **overrides):
-    """A draft window whose claims are copied exactly from the cited evidence."""
+    """A draft window whose restated values are copied exactly from the cited evidence."""
     start = start or local(blocks[0])
     end = end or local(blocks[-1]) + timedelta(hours=3)
-    temps = [b.temperature_f for b in blocks]
-    pops = [b.precipitation_probability_pct for b in blocks]
-    winds = [b.wind_speed_mph for b in blocks]
-    aqis = [b.aqi for b in blocks]
     data = {
         "title": "Test window",
         "observation_ids": [b.observation_id for b in blocks],
         "start_local": f"{start:%Y-%m-%dT%H:%M}",
         "end_local": f"{end:%Y-%m-%dT%H:%M}",
         "claimed_conditions": {
-            "temperature_min_f": min(temps) if None not in temps else None,
-            "temperature_max_f": max(temps) if None not in temps else None,
-            "precipitation_probability_max_pct": max(pops) if None not in pops else None,
-            "wind_speed_max_mph": max(winds) if None not in winds else None,
-            "aqi_max": max(aqis) if None not in aqis else None,
+            "cited_values": [
+                {
+                    "observation_id": b.observation_id,
+                    "temperature_f": b.temperature_f,
+                    "precipitation_probability_pct": b.precipitation_probability_pct,
+                    "wind_speed_mph": b.wind_speed_mph,
+                    "aqi": b.aqi,
+                }
+                for b in blocks
+            ],
             "conditions_summary": blocks[0].description or "",
         },
         "weather_reasoning": "Mild conditions suit the brief.",
@@ -67,9 +68,10 @@ def window(ledger: EvidenceLedger, blocks, start: datetime | None = None, end: d
         "ad_copy": ["Stop by today."],
         "risks": [],
     }
+    first_claim = data["claimed_conditions"]["cited_values"][0]
     for key, value in overrides.items():
-        if key in data["claimed_conditions"]:
-            data["claimed_conditions"][key] = value
+        if key in first_claim:
+            first_claim[key] = value  # claim overrides apply to the first cited block
         else:
             data[key] = value
     return data

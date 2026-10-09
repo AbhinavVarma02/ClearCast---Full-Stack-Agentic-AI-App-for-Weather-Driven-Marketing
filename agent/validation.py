@@ -26,7 +26,7 @@ from agent.schemas import (
 )
 
 MAX_WINDOWS = 3
-MAX_BLOCKS_PER_WINDOW = 4
+MAX_BLOCKS_PER_WINDOW = 2
 MIN_WINDOW = timedelta(hours=1)
 TEMPERATURE_TOLERANCE_F = 0.6
 PERCENT_TOLERANCE = 1.0
@@ -281,7 +281,13 @@ class DraftValidation:
 
     @property
     def passed(self) -> bool:
-        return not self.grounding_errors and bool(self.eligible_windows)
+        """Plan-level checks pass and at least one window is fully verified and eligible.
+
+        Windows are verified independently: a window with any grounding issue or
+        constraint violation is never recommended (it is reported as rejected),
+        but it does not discard other windows that passed every check.
+        """
+        return not self.plan_errors and bool(self.eligible_windows)
 
 
 class _Validator:
@@ -492,7 +498,7 @@ class _Validator:
 
         if result.blocks:
             result.observed = observed_conditions(result.blocks)
-            issues.extend(self._claim_issues(draft, result.observed, window_id))
+            issues.extend(self._claim_issues(draft, result.blocks, window_id))
             result.constraint_violations = self._constraint_violations(result)
 
         issues.extend(self._text_issues(draft.weather_reasoning, "Weather reasoning", window_id))
@@ -515,83 +521,100 @@ class _Validator:
         issues.extend(self._risk_issues(draft.risks, window_id))
         return result
 
-    def _claim_issues(self, draft: WindowDraft, observed: ObservedConditions, window_id: str) -> list[ValidationIssue]:
-        claimed = draft.claimed_conditions
-        issues = []
-
-        def compare(name: str, claim: float | None, actual: float | None, tolerance: float, unit: str, required: bool):
-            if claim is None:
-                if required:
-                    issues.append(self._issue("missing_claim", f"{name} must be stated from the evidence.", window_id))
-                return
-            if actual is None:
-                issues.append(
-                    self._issue(
-                        "claim_unverifiable",
-                        f"{name} cannot be verified because the cited evidence lacks that field.",
-                        window_id,
-                    )
-                )
-                return
-            if abs(claim - actual) > tolerance:
-                issues.append(
-                    self._issue(
-                        f"{name.split()[0].lower()}_mismatch",
-                        f"Claimed {name} {claim:g} {unit} does not match the cited evidence ({actual:g} {unit}).",
-                        window_id,
-                    )
-                )
-
-        compare(
-            "Temperature minimum",
-            claimed.temperature_min_f,
-            observed.temperature_min_f,
-            TEMPERATURE_TOLERANCE_F,
-            "°F",
-            True,
-        )
-        compare(
-            "Temperature maximum",
-            claimed.temperature_max_f,
-            observed.temperature_max_f,
-            TEMPERATURE_TOLERANCE_F,
-            "°F",
-            True,
-        )
-        pop_claim, pop_actual = claimed.precipitation_probability_max_pct, observed.precipitation_probability_max_pct
-        if (
-            pop_claim is not None
-            and pop_actual is not None
-            and pop_actual > 1.5
-            and abs(pop_claim - pop_actual / 100) <= 0.011
-        ):
+    def _claim_issues(
+        self, draft: WindowDraft, blocks: list[ForecastObservation], window_id: str
+    ) -> list[ValidationIssue]:
+        """Every value the model restated for a cited block must match that block's evidence."""
+        issues: list[ValidationIssue] = []
+        claims: dict[str, list] = {}
+        for value in draft.claimed_conditions.cited_values:
+            claims.setdefault(value.observation_id, []).append(value)
+        cited = {obs.observation_id for obs in blocks}
+        for oid in claims.keys() - cited:
             issues.append(
                 self._issue(
-                    "precipitation_unit_error",
-                    "Precipitation probability must be stated in percent (0-100), not as a fraction.",
+                    "claim_for_uncited_observation",
+                    f"Values are restated for {oid}, which the window does not cite.",
                     window_id,
                 )
             )
-        else:
-            compare("Precipitation probability", pop_claim, pop_actual, PERCENT_TOLERANCE, "%", True)
-        compare(
-            "Wind maximum", claimed.wind_speed_max_mph, observed.wind_speed_max_mph, WIND_TOLERANCE_MPH, "mph", False
-        )
-        if claimed.aqi_max is not None:
-            if observed.aqi_max is None:
+
+        def compare(
+            oid: str, name: str, claim: float | None, actual: float | None, tolerance: float, unit: str
+        ) -> None:
+            if claim is None and actual is None:
+                return
+            if claim is None:
+                issues.append(
+                    self._issue("missing_claim", f"{oid}: restate its {name} from the evidence table.", window_id)
+                )
+            elif actual is None:
                 issues.append(
                     self._issue(
-                        "aqi_without_evidence", "AQI is claimed but no AQI forecast covers the window.", window_id
+                        "claim_unverifiable", f"{oid}: the evidence has no {name}, so none may be stated.", window_id
                     )
                 )
-            elif claimed.aqi_max != observed.aqi_max:
+            elif abs(claim - actual) > tolerance:
                 issues.append(
                     self._issue(
-                        "aqi_mismatch",
-                        f"Claimed AQI {claimed.aqi_max} does not match the cited evidence (AQI {observed.aqi_max}).",
+                        f"{name.split()[0].lower()}_mismatch",
+                        f"{oid}: stated {name} {claim:g} {unit} does not match the evidence ({actual:g} {unit}).",
                         window_id,
                     )
                 )
+
+        for obs in blocks:
+            values = claims.get(obs.observation_id, [])
+            if len(values) != 1:
+                issues.append(
+                    self._issue(
+                        "missing_claim" if not values else "duplicate_claim",
+                        f"{obs.observation_id}: restate its values exactly once in cited_values.",
+                        window_id,
+                    )
+                )
+                continue
+            claim = values[0]
+            compare(
+                obs.observation_id, "temperature", claim.temperature_f, obs.temperature_f, TEMPERATURE_TOLERANCE_F, "°F"
+            )
+            pop, actual_pop = claim.precipitation_probability_pct, obs.precipitation_probability_pct
+            if pop is not None and actual_pop is not None and actual_pop > 1.5 and abs(pop - actual_pop / 100) <= 0.011:
+                issues.append(
+                    self._issue(
+                        "precipitation_unit_error",
+                        f"{obs.observation_id}: precipitation probability must be in percent (0-100), not a fraction.",
+                        window_id,
+                    )
+                )
+            else:
+                compare(obs.observation_id, "precipitation probability", pop, actual_pop, PERCENT_TOLERANCE, "%")
+            if claim.wind_speed_mph is not None:
+                compare(
+                    obs.observation_id,
+                    "wind speed",
+                    claim.wind_speed_mph,
+                    obs.wind_speed_mph,
+                    WIND_TOLERANCE_MPH,
+                    "mph",
+                )
+            if claim.aqi is not None:
+                if obs.aqi is None:
+                    issues.append(
+                        self._issue(
+                            "aqi_without_evidence",
+                            f"{obs.observation_id}: no AQI forecast covers this block.",
+                            window_id,
+                        )
+                    )
+                elif claim.aqi != obs.aqi:
+                    issues.append(
+                        self._issue(
+                            "aqi_mismatch",
+                            f"{obs.observation_id}: stated AQI {claim.aqi} does not match the evidence (AQI {obs.aqi}).",
+                            window_id,
+                        )
+                    )
         return issues
 
     def _constraint_violations(self, result: WindowValidation) -> list[str]:

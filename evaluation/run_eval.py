@@ -89,13 +89,21 @@ def independent_window_checks(plan: CampaignPlan, spec: str) -> tuple[int, int, 
         items = [by_ts.get(_id_to_ts(oid)) for oid in window.observation_ids]
         ok = all(items)
         if ok:
+            # Every value the model restated must equal the raw provider value for that block.
+            restated = {v.observation_id: v for v in window.claimed_conditions.cited_values}
+            for oid, item in zip(window.observation_ids, items, strict=True):
+                value = restated.get(oid)
+                ok &= value is not None and value.temperature_f is not None
+                if value is None or value.temperature_f is None:
+                    continue
+                ok &= abs(value.temperature_f - item["main"]["temp"]) <= TEMP_TOLERANCE
+                if item.get("pop") is not None:
+                    ok &= value.precipitation_probability_pct is not None and (
+                        abs(value.precipitation_probability_pct - item["pop"] * 100) <= PCT_TOLERANCE
+                    )
+            observed = window.observed_conditions
             temps = [i["main"]["temp"] for i in items]
-            claimed = window.claimed_conditions
-            pops = [i.get("pop") for i in items]
-            ok &= abs(claimed.temperature_min_f - min(temps)) <= TEMP_TOLERANCE
-            ok &= abs(claimed.temperature_max_f - max(temps)) <= TEMP_TOLERANCE
-            if None not in pops:
-                ok &= abs(claimed.precipitation_probability_max_pct - max(pops) * 100) <= PCT_TOLERANCE
+            ok &= observed is not None and abs(observed.temperature_max_f - max(temps)) <= TEMP_TOLERANCE
             span_start = datetime.fromtimestamp(min(i["dt"] for i in items), tz)
             span_end = datetime.fromtimestamp(max(i["dt"] for i in items), tz) + timedelta(hours=3)
             ok &= span_start <= window.start_local < window.end_local <= span_end
@@ -207,6 +215,8 @@ async def run_plan_scenario(scenario: Scenario) -> Result:
         failures.append(f"expected {scenario.expect_status}, got {plan.status.value}")
     codes = {issue.code for issue in plan.validation.errors}
     missing = [code for code in scenario.expect_codes if code not in codes]
+    warning_codes = {issue.code for issue in plan.validation.warnings}
+    missing += [code for code in scenario.expect_rejected_codes if code not in warning_codes]
     if missing:
         failures.append(f"missing validation codes {missing}; saw {sorted(codes)}")
     if scenario.expect_provider_category and scenario.expect_provider_category not in (
@@ -225,7 +235,13 @@ async def run_plan_scenario(scenario: Scenario) -> Result:
     result.compliant_windows, result.constrained_windows = compliant, constrained
     failures.extend(problems)
     if scenario.designed_invalid:
-        result.rejected = plan.status == ReviewStatus.VALIDATION_FAILED
+        # Rejected = the invalid output is never recommended: either the plan failed, or the
+        # corrupted window was moved to rejected_windows and every remaining window is verified.
+        result.rejected = plan.status == ReviewStatus.VALIDATION_FAILED or (
+            bool(plan.rejected_windows)
+            and all(w.grounding.verified and w.constraint_check.eligible for w in plan.windows)
+            and all(code in warning_codes for code in scenario.expect_rejected_codes)
+        )
     if scenario.transient_invalid:
         result.repaired = plan.status == ReviewStatus.PENDING_REVIEW and plan.validation.repair_attempts >= 1
     result.passed = not failures

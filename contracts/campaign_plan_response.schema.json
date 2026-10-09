@@ -411,10 +411,11 @@
       "title": "CampaignWindow",
       "type": "object"
     },
-    "ClaimedConditions": {
+    "CitedValue": {
       "additionalProperties": false,
+      "description": "The model restates the values it relied on for one cited block; Python checks each one.",
       "properties": {
-        "aqi_max": {
+        "aqi": {
           "anyOf": [
             {
               "type": "integer"
@@ -423,69 +424,80 @@
               "type": "null"
             }
           ],
-          "description": "Highest AQI (1-5) across the cited blocks from the AQI forecast, or null.",
-          "title": "Aqi Max"
+          "description": "That block's AQI (1-5) copied from its row, or null if the row shows n/a.",
+          "title": "Aqi"
+        },
+        "observation_id": {
+          "description": "ID of one forecast block cited by this window.",
+          "title": "Observation Id",
+          "type": "string"
+        },
+        "precipitation_probability_pct": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "That block's precipitation probability in PERCENT (0-100), copied from its row.",
+          "title": "Precipitation Probability Pct"
+        },
+        "temperature_f": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "That block's temperature in °F, copied from its row.",
+          "title": "Temperature F"
+        },
+        "wind_speed_mph": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "That block's wind speed in mph, copied from its row.",
+          "title": "Wind Speed Mph"
+        }
+      },
+      "required": [
+        "observation_id",
+        "temperature_f",
+        "precipitation_probability_pct",
+        "wind_speed_mph",
+        "aqi"
+      ],
+      "title": "CitedValue",
+      "type": "object"
+    },
+    "ClaimedConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "cited_values": {
+          "description": "Exactly one entry per cited forecast block, with values copied from the evidence table.",
+          "items": {
+            "$ref": "#/$defs/CitedValue"
+          },
+          "title": "Cited Values",
+          "type": "array"
         },
         "conditions_summary": {
           "description": "Short description of the cited conditions.",
           "title": "Conditions Summary",
           "type": "string"
-        },
-        "precipitation_probability_max_pct": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "Highest precipitation probability across cited blocks, in PERCENT (0-100).",
-          "title": "Precipitation Probability Max Pct"
-        },
-        "temperature_max_f": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "Highest temperature (°F) across the cited forecast blocks, copied from evidence.",
-          "title": "Temperature Max F"
-        },
-        "temperature_min_f": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "Lowest temperature (°F) across the cited forecast blocks, copied from evidence.",
-          "title": "Temperature Min F"
-        },
-        "wind_speed_max_mph": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "description": "Highest wind speed (mph) across the cited blocks, or null.",
-          "title": "Wind Speed Max Mph"
         }
       },
       "required": [
-        "temperature_min_f",
-        "temperature_max_f",
-        "precipitation_probability_max_pct",
-        "wind_speed_max_mph",
-        "aqi_max",
+        "cited_values",
         "conditions_summary"
       ],
       "title": "ClaimedConditions",

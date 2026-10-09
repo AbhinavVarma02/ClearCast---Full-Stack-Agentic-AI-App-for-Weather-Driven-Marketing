@@ -280,11 +280,23 @@ class CampaignPlanningService:
             errors.extend(draft_errors)
             warnings.extend(notes_warnings)
             if validation is not None:
-                errors.extend(validation.grounding_errors)
-                if not validation.eligible_windows:
-                    errors.append(
-                        _error("no_eligible_windows", "Every proposed window violates the client's hard constraints.")
+                errors.extend(validation.plan_errors)
+                window_issues = [issue for w in validation.windows for issue in w.grounding_issues]
+                if validation.passed:
+                    # Verified windows survive; failed ones are reported, never recommended.
+                    warnings.extend(
+                        issue.model_copy(update={"severity": "warning", "message": f"Rejected window: {issue.message}"})
+                        for issue in window_issues
                     )
+                else:
+                    errors.extend(window_issues)
+                    if not validation.eligible_windows:
+                        errors.append(
+                            _error(
+                                "no_eligible_windows",
+                                "No proposed window passed every grounding check and hard client constraint.",
+                            )
+                        )
 
         passed = validation is not None and validation.passed and not errors
         status = ReviewStatus.PENDING_REVIEW if passed else ReviewStatus.VALIDATION_FAILED

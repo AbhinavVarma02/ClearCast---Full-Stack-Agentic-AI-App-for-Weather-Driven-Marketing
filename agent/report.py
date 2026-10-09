@@ -167,12 +167,15 @@ def render_evidence(plan: CampaignPlan) -> str:
                 f"{_num(obs.rain_volume_mm_3h)} | {_num(obs.wind_speed_mph)} | {_num(obs.aqi)} | "
                 f"{_cell(obs.description)} |"
             )
-        claimed = window.claimed_conditions
+        restated = "; ".join(
+            f"`{value.observation_id}` {_num(value.temperature_f, ' °F')}, "
+            f"{_num(value.precipitation_probability_pct, '%', 0)} precip., "
+            f"{_num(value.wind_speed_mph, ' mph')}, AQI {_num(value.aqi)}"
+            for value in window.claimed_conditions.cited_values
+        )
         lines += [
             "",
-            f"- Model-claimed: temp {_num(claimed.temperature_min_f)}–{_num(claimed.temperature_max_f)} °F, "
-            f"precip. prob. ≤ {_num(claimed.precipitation_probability_max_pct, '%', 0)}, "
-            f"wind ≤ {_num(claimed.wind_speed_max_mph, ' mph')}, AQI ≤ {_num(claimed.aqi_max)}",
+            f"- Values restated by the model (checked against the table above): {restated or 'none'}",
             f"- Grounding: {'verified' if window.grounding.verified else 'FAILED'}"
             + (f" — {'; '.join(_cell(i) for i in window.grounding.issues)}" if window.grounding.issues else ""),
             f"- Hard constraints: {'satisfied' if window.constraint_check.eligible else 'VIOLATED'}"

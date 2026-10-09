@@ -21,7 +21,31 @@ def test_grounded_draft_passes(ledger):
     a, b = find_block(ledger, 4, 8), find_block(ledger, 4, 11)
     result = validate(ledger, draft(window(ledger, [a, b])))
     assert result.passed, [i.message for i in result.grounding_errors]
+    # Aggregates are computed by Python from the evidence, not taken from the model.
     assert result.eligible_windows[0].observed.temperature_max_f == max(a.temperature_f, b.temperature_f)
+
+
+def test_restated_values_must_cover_exactly_the_cited_blocks(ledger):
+    a, b = find_block(ledger, 4, 8), find_block(ledger, 4, 11)
+    missing = window(ledger, [a, b])
+    missing["claimed_conditions"]["cited_values"].pop()
+    assert "missing_claim" in codes(validate(ledger, draft(missing)))
+    extra = window(ledger, [a])
+    extra["claimed_conditions"]["cited_values"].append(
+        {**extra["claimed_conditions"]["cited_values"][0], "observation_id": b.observation_id}
+    )
+    assert "claim_for_uncited_observation" in codes(validate(ledger, draft(extra)))
+    too_long = window(ledger, [a, b, find_block(ledger, 4, 14)])
+    assert "window_too_long" in codes(validate(ledger, draft(too_long)))
+
+
+def test_one_bad_window_is_rejected_without_discarding_verified_windows(ledger):
+    good = window(ledger, [find_block(ledger, 5, 8)])
+    bad = window(ledger, [find_block(ledger, 4, 8)], temperature_f=120.0)
+    result = validate(ledger, draft(bad, good))
+    assert result.passed
+    assert [w.window_id for w in result.eligible_windows] == ["w2"]
+    assert result.windows[0].grounding_issues[0].code == "temperature_mismatch"
 
 
 def test_invented_and_non_forecast_ids_are_rejected(ledger):
@@ -59,10 +83,10 @@ def test_times_in_the_wrong_timezone_are_rejected(ledger):
 @pytest.mark.parametrize(
     ("override", "code"),
     [
-        ({"temperature_max_f": 99.0}, "temperature_mismatch"),
-        ({"temperature_min_f": None}, "missing_claim"),
-        ({"wind_speed_max_mph": 40.0}, "wind_mismatch"),
-        ({"aqi_max": 5}, "aqi_mismatch"),
+        ({"temperature_f": 99.0}, "temperature_mismatch"),
+        ({"temperature_f": None}, "missing_claim"),
+        ({"wind_speed_mph": 40.0}, "wind_mismatch"),
+        ({"aqi": 5}, "aqi_mismatch"),
     ],
 )
 def test_claimed_values_must_match_cited_evidence(ledger, override, code):
@@ -75,14 +99,14 @@ def test_precipitation_fraction_is_flagged_as_a_unit_error(ledger):
         o for o in ledger.forecast if (o.precipitation_probability_pct or 0) >= 20 and o.datetime_utc > FIXED_NOW
     )
     fraction = block.precipitation_probability_pct / 100
-    result = validate(ledger, draft(window(ledger, [block], precipitation_probability_max_pct=fraction)))
+    result = validate(ledger, draft(window(ledger, [block], precipitation_probability_pct=fraction)))
     assert "precipitation_unit_error" in codes(result)
 
 
 def test_aqi_claim_without_aqi_evidence_is_rejected():
     no_air = ledger_for("baseline_mild", air=False)
     block = find_block(no_air, 4, 8)
-    assert "aqi_without_evidence" in codes(validate(no_air, draft(window(no_air, [block], aqi_max=2))))
+    assert "aqi_without_evidence" in codes(validate(no_air, draft(window(no_air, [block], aqi=2))))
 
 
 def test_free_text_weather_numbers_must_exist_in_evidence(ledger):

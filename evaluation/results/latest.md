@@ -1,6 +1,6 @@
 # ClearCast offline evaluation results
 
-Generated 2026-10-09T02:07:19+00:00 · Python 3.13.2 · 1.49 s · 43 scenarios
+Generated 2026-10-09T02:19:36+00:00 · Python 3.13.2 · 1.64 s · 45 scenarios
 
 > Deterministic offline tests with synthetic weather and scripted model outputs. They measure validation, grounding, constraint, session, and contract behaviour of the software. They are not human evaluations of recommendation usefulness and are not evidence of campaign lift, production effectiveness, or general LLM accuracy.
 
@@ -8,7 +8,7 @@ Generated 2026-10-09T02:07:19+00:00 · Python 3.13.2 · 1.49 s · 43 scenarios
 |---|---|
 | Scenario pass rate | 100.0% |
 | Schema-validity rate (returned plans) | 100.0% |
-| Forecast-grounding consistency (30 windows, independent recheck) | 100.0% |
+| Forecast-grounding consistency (32 windows, independent recheck) | 100.0% |
 | Hard-constraint compliance (20 windows, independent recheck) | 100.0% |
 | Invalid-output rejection rate | 100.0% |
 | Repair success rate (invalid once, then valid) | 100.0% |
@@ -36,6 +36,8 @@ Generated 2026-10-09T02:07:19+00:00 · Python 3.13.2 · 1.49 s · 43 scenarios
 | invalid_window_times_persistent | invalid_output | validation_failed | yes |
 | elapsed_window_persistent | invalid_output | validation_failed | yes |
 | unsupported_evidence_repaired | invalid_output | pending_review | yes |
+| partial_invented_id_window_rejected | invalid_output | pending_review | yes |
+| partial_value_mismatch_window_rejected | invalid_output | pending_review | yes |
 | unsupported_evidence_persistent | invalid_output | validation_failed | yes |
 | value_mismatch_persistent | invalid_output | validation_failed | yes |
 | unit_confusion_repaired | invalid_output | pending_review | yes |

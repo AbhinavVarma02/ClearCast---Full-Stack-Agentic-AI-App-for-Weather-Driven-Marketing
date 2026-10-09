@@ -50,10 +50,12 @@ def check_plan(plan: dict, label: str, expect_fixture: bool, expect_live: bool) 
         for obs in window["evidence"]:
             if by_id.get(obs["observation_id"]) != obs:
                 problems.append(f"{label}/{window['window_id']}: cited evidence differs from the ledger")
-        temps = [o["temperature_f"] for o in window["evidence"]]
-        claimed = window["claimed_conditions"]
-        if temps and abs(claimed["temperature_max_f"] - max(temps)) > 0.6:
-            problems.append(f"{label}/{window['window_id']}: claimed temperature does not match evidence")
+        for value in window["claimed_conditions"]["cited_values"]:
+            source = by_id.get(value["observation_id"])
+            if source is None or value["temperature_f"] is None or source["temperature_f"] is None:
+                problems.append(f"{label}/{window['window_id']}: restated value lacks matching evidence")
+            elif abs(value["temperature_f"] - source["temperature_f"]) > 0.6:
+                problems.append(f"{label}/{window['window_id']}: restated temperature differs from evidence")
         if not (window["grounding"]["verified"] and window["constraint_check"]["eligible"]):
             problems.append(f"{label}/{window['window_id']}: unverified window exposed as recommended")
     if plan["status"] == "validation_failed" and plan["windows"]:

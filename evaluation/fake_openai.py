@@ -51,7 +51,8 @@ def parse_evidence(message: str) -> list[Block]:
             continue
         parts = [part.strip() for part in line.split(" | ")]
         oid, start_text, temp, feels, pop, wind, aqi, conditions, status = parts[:9]
-        start = datetime.fromisoformat(start_text.split(" ", 1)[1])
+        # Column format: 'Thu 2030-04-04T08:00-11:00' (local block span).
+        start = datetime.fromisoformat(start_text.split(" ", 1)[1][:16])
         activation = []
         match = re.search(r"activation ([^)]*)\)", status)
         if status.startswith("ELIGIBLE") and match:
@@ -87,17 +88,18 @@ def _brief_value(text: str, label: str) -> str:
 
 
 def _claims(blocks: list[Block]) -> dict:
-    temps = [b.temp for b in blocks]
-    winds = [b.wind for b in blocks]
-    aqis = [b.aqi for b in blocks]
+    """Copy each cited block's values exactly as the evidence table shows them."""
     return {
-        "temperature_min_f": min(temps) if None not in temps else None,
-        "temperature_max_f": max(temps) if None not in temps else None,
-        "precipitation_probability_max_pct": max(b.pop for b in blocks)
-        if all(b.pop is not None for b in blocks)
-        else None,
-        "wind_speed_max_mph": max(winds) if None not in winds else None,
-        "aqi_max": max(aqis) if None not in aqis else None,
+        "cited_values": [
+            {
+                "observation_id": block.oid,
+                "temperature_f": block.temp,
+                "precipitation_probability_pct": block.pop,
+                "wind_speed_mph": block.wind,
+                "aqi": block.aqi,
+            }
+            for block in blocks
+        ],
         "conditions_summary": ", ".join(dict.fromkeys(b.conditions for b in blocks)),
     }
 
@@ -177,31 +179,33 @@ def grounded_draft(message: str, *, pick_ineligible: bool = False) -> dict:
     }
 
 
-def _mutate(draft: dict, policy: str, message: str) -> dict | str:
+def _mutate(draft: dict, policy: str) -> dict:
+    """Corrupt every window (default) or only the first ("first:<policy>")."""
     if not draft["windows"]:
         return draft
-    first = draft["windows"][0]
-    if policy == "invented_id":
-        first["observation_ids"] = ["fc-20991231T0000Z"]
-    elif policy == "wrong_temperature":
-        first["claimed_conditions"]["temperature_max_f"] = (first["claimed_conditions"]["temperature_max_f"] or 0) + 15
-    elif policy == "outside_window":
-        end = datetime.fromisoformat(first["end_local"]) + timedelta(hours=4)
-        first["end_local"] = f"{end:%Y-%m-%dT%H:%M}"
-    elif policy == "past_window":
-        start = datetime.fromisoformat(first["start_local"]) - timedelta(days=3)
-        first["start_local"] = f"{start:%Y-%m-%dT%H:%M}"
-    elif policy == "kpi_claim":
-        first["marketing_hypothesis"] = "This campaign will increase sales by 25% and deliver a strong ROI."
-    elif policy == "unhedged":
-        first["marketing_hypothesis"] = "Customers buy more on days like this."
-    elif policy == "unit_confusion":
-        pct = first["claimed_conditions"]["precipitation_probability_max_pct"]
-        first["claimed_conditions"]["precipitation_probability_max_pct"] = round(pct / 100, 2) if pct else pct
-    elif policy == "invented_number":
-        first["weather_reasoning"] = "A heat spike to 131°F makes this the standout window."
-    elif policy == "cite_current":
-        first["observation_ids"] = [m for m in re.findall(r"\bcw-\d{8}T\d{4}Z\b", message)][:1] or ["cw-x"]
+    first_only = policy.startswith("first:")
+    policy = policy.removeprefix("first:")
+    for window in draft["windows"][:1] if first_only else draft["windows"]:
+        values = window["claimed_conditions"]["cited_values"]
+        if policy == "invented_id":
+            window["observation_ids"] = ["fc-20991231T0000Z"]
+        elif policy == "wrong_temperature":
+            values[0]["temperature_f"] = (values[0]["temperature_f"] or 0) + 15
+        elif policy == "outside_window":
+            end = datetime.fromisoformat(window["end_local"]) + timedelta(hours=4)
+            window["end_local"] = f"{end:%Y-%m-%dT%H:%M}"
+        elif policy == "past_window":
+            start = datetime.fromisoformat(window["start_local"]) - timedelta(days=3)
+            window["start_local"] = f"{start:%Y-%m-%dT%H:%M}"
+        elif policy == "kpi_claim":
+            window["marketing_hypothesis"] = "This campaign will increase sales by 25% and deliver a strong ROI."
+        elif policy == "unhedged":
+            window["marketing_hypothesis"] = "Customers buy more on days like this."
+        elif policy == "unit_confusion":
+            pct = values[0]["precipitation_probability_pct"]
+            values[0]["precipitation_probability_pct"] = round(pct / 100, 3) if pct else pct
+        elif policy == "invented_number":
+            window["weather_reasoning"] = "A heat spike to 131°F makes this the standout window."
     return draft
 
 
@@ -339,5 +343,5 @@ class ScriptedOpenAI:
         if policy == "missing_fields":
             return {"role": "assistant", "content": json.dumps({"strategy_summary": "No windows field."})}
         draft = grounded_draft(message, pick_ineligible=policy == "ineligible_choice")
-        draft = _mutate(draft, policy, message)
+        draft = _mutate(draft, policy)
         return {"role": "assistant", "content": json.dumps(draft)}

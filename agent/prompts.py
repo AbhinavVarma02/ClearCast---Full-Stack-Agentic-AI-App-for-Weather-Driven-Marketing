@@ -4,7 +4,7 @@ System prompts for the ClearCast agent.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from agent.schemas import CampaignBrief, ClientProfile, ClientSnapshot
 
@@ -81,16 +81,15 @@ DRAFTING_SYSTEM_PROMPT = """You are ClearCast's campaign plan drafter. Convert r
 evidence into a structured campaign plan that deterministic code will verify.
 
 Rules (violations are rejected automatically):
-1. Recommend 1 to 3 non-overlapping campaign windows.
-2. Each window cites 1-4 CONSECUTIVE forecast blocks by observation_id (fc-...) from the
-   evidence table. Never invent IDs. Prefer blocks marked ELIGIBLE.
-3. Each forecast block covers 3 hours starting at its local start time. start_local and
-   end_local are local times formatted YYYY-MM-DDTHH:MM, must fall inside the cited blocks
-   and inside the block's permitted activation times, start in the future, and span at
-   least one hour.
-4. claimed_conditions must be copied from the cited blocks: the minimum and maximum
-   temperature (°F), the maximum precipitation probability in PERCENT (0-100), the maximum
-   wind speed (mph) or null, and the maximum AQI (1-5) or null if no AQI value is listed.
+1. Recommend 1 to 3 non-overlapping campaign windows on different days or dayparts.
+2. Each row of the evidence table is ONE forecast block covering the local time span shown
+   (for example 07:00-10:00). Prefer one block per window; at most 2 consecutive blocks.
+   Cite blocks by observation_id (fc-...). Never invent IDs. Use only rows marked ELIGIBLE.
+3. Set start_local and end_local (format YYYY-MM-DDTHH:MM) inside the block's "activation"
+   times shown in its status; the simplest valid choice is exactly the activation span.
+4. In claimed_conditions.cited_values, add exactly one entry per cited block and COPY that
+   row's temperature (°F), precipitation probability (%), wind (mph), and AQI (null if n/a).
+   Do not compute or round differently; copy the numbers as shown.
 5. Only mention weather numbers that appear in the evidence table, with their units.
 6. marketing_hypothesis must start with "We hypothesize" and describe an untested
    expectation about customer behaviour. Do not state KPIs, sales or traffic percentages,
@@ -127,8 +126,8 @@ def build_drafting_message(
         f"- Soft preferences: {profile.preferences.preferred_conditions or 'none'}",
         f"- Current time: {now.astimezone(UTC):%Y-%m-%dT%H:%M} UTC",
         "",
-        "Evidence table (forecast blocks retrieved for this request):",
-        "id | local start | temp °F | feels °F | precip % | wind mph | AQI | conditions | status",
+        "Evidence table (one row per 3-hour forecast block retrieved for this request):",
+        "id | local block span | temp °F | feels °F | precip % | wind mph | AQI | conditions | status",
         *evidence_rows,
         "",
         "Analyst notes from the tool-calling step (unverified model text):",
@@ -150,7 +149,7 @@ def evidence_row(obs, assessment) -> str:
     return " | ".join(
         [
             obs.observation_id,
-            f"{local:%a %Y-%m-%dT%H:%M}",
+            f"{local:%a %Y-%m-%dT%H:%M}-{local + timedelta(hours=3):%H:%M}",
             _fmt(obs.temperature_f),
             _fmt(obs.feels_like_f),
             _fmt(obs.precipitation_probability_pct, 0),

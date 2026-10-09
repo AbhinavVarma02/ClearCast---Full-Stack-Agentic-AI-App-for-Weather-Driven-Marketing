@@ -48,6 +48,7 @@ class Scenario:
     expect_provider_category: str | None = None
     expect_repairs: int | None = None
     expect_drafting: bool | None = None
+    expect_rejected_codes: tuple[str, ...] = ()  # codes reported for windows rejected while the plan passes
     designed_invalid: bool = False  # model output stays invalid on every attempt
     transient_invalid: bool = False  # invalid first, valid after one repair
 
@@ -216,6 +217,24 @@ PLAN_SCENARIOS: list[Scenario] = [
         expect_status="pending_review",
         expect_repairs=1,
         transient_invalid=True,
+    ),
+    Scenario(
+        "partial_invented_id_window_rejected",
+        "invalid_output",
+        "One window cites an invented ID on every attempt; verified windows survive, the bad one is rejected.",
+        drafts=("first:invented_id",),
+        expect_status="pending_review",
+        expect_rejected_codes=("unknown_observation",),
+        designed_invalid=True,
+    ),
+    Scenario(
+        "partial_value_mismatch_window_rejected",
+        "invalid_output",
+        "One window restates a temperature 15 F off on every attempt.",
+        drafts=("first:wrong_temperature",),
+        expect_status="pending_review",
+        expect_rejected_codes=("temperature_mismatch",),
+        designed_invalid=True,
     ),
     Scenario(
         "unsupported_evidence_persistent",
