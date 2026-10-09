@@ -79,3 +79,54 @@ git push space "$ROLLBACK:main"
 * No authentication beyond unguessable per-browser session IDs; the Space is
   public.
 * Health and readiness are endpoints and logs, not monitored SLAs.
+
+## Deployment record (2026-10-08 / 2026-10-09 UTC)
+
+### Discovery
+
+| Item | Finding |
+|---|---|
+| Space | `abhinavvathadi/ClearCast-AI`, owned by the authenticated Hugging Face account, documented in `progress.md` as the verified deployment |
+| SDK before upgrade | Gradio SDK, `app_file: app.py`, Python 3.13 runtime (from Space run logs), `cpu-basic` |
+| Last working revision before upgrade | `bd0f16d` ("Record successful deployed generation test"), stage RUNNING; it configured `gpt-5.5`, while the later local commit `ca22316` (gpt-4o-mini) had been pushed only to the second Space |
+| Secrets configured (names only) | `OPENAI_API_KEY`, `OPENWEATHERMAP_API_KEY`, `LANGCHAIN_API_KEY`, `LANGCHAIN_ENDPOINT` (no `LANGCHAIN_TRACING_V2`, so tracing stays off) |
+| Second Space | `AbhinavVarma/ClearCast-AI` (SLEEPING, a copy at local commit `1fa3112`) was **not modified** |
+| GitHub vs Space | GitHub `main` (`b354cbb`) still built the graph at import time, used `inbrowser=True`, and lacked the Space's `app.py`/`progress.md`; the Space history was 15 commits ahead |
+
+The local git credential was not authorised for this Space, so revisions were
+uploaded with the authenticated `huggingface_hub` client as single commits
+containing the exact `git archive` tree of the GitHub branch.
+
+### Revisions
+
+| Space commit | Source (GitHub) | Result |
+|---|---|---|
+| `79c4c46` | `84b0cf9` | Built and RUNNING in about 90 s. The live smoke test found the outdoor-fitness plan failing validation on every attempt (the model mis-aggregated temperatures), which led to `97419de`. |
+| `1c80e59` | `97419de` | RUNNING; both live plans validated. |
+| `8997ce6` | `109adb5` | RUNNING; final live verification below. |
+
+### Live verification on `8997ce6`
+
+Real GPT-4o-mini and OpenWeatherMap calls through the public Gradio API
+(`scripts/smoke_test.py --expect-live`, plus the manual checks noted):
+
+| Check | Evidence |
+|---|---|
+| Build succeeds | Space stage `RUNNING` at the uploaded commit |
+| UI loads | Public URL serves the Gradio app; the readiness pill shows "Agent ready" |
+| Gateway and FastAPI ready | Launcher log: `service.healthy` for orchestrator, gateway, frontend; gateway "Server listening at http://127.0.0.1:8787" |
+| MCP tool discovery | Log `runtime.init.ready` with `geocode_city, get_current_weather, get_forecast, get_air_quality` |
+| End-to-end request | Coffee shop (Baltimore): Pending Review, 1 window, 0 repairs, 4 LLM calls, 7.8 s, 13,926 reported tokens. Outdoor fitness (Austin): Pending Review, 3 windows, 1 repair (`too_many_windows`), 5 LLM calls, 25.0 s, 24,065 reported tokens |
+| Structured validation | Both responses parsed as `CampaignPlan`; every recommended window `grounding.verified` and `constraint_check.eligible` |
+| Evidence matches source observations | Every cited observation in each window equals the request's evidence ledger entry; every restated temperature matches it; evidence source `openweathermap`, 40 forecast observations |
+| Session isolation | Two `gradio_client` sessions received distinct `session_ref` values |
+| Human approval and export | Coffee plan approved; downloaded JSON export reports `"status": "approved"` |
+| Error handling | Unknown location → Validation Failed (`location_not_found`), 0 credential-shaped strings in the response; blank location → "Please enter a location." |
+| Internal services not public | `/internal/health`, `/internal/ready`, `/v1/schemas`, `/health`, `/ready` return 404 on the public URL; `/openapi.json` lists only Gradio's own routes |
+| Secrets in logs | 0 credential-shaped strings in the Space run log |
+
+These are individual live runs, not a benchmark: durations, token counts, and
+repair counts vary with the model and the weather. Earlier live runs on
+`8997ce6` also validated two coffee-shop plans (Baltimore with 0 repairs;
+Seattle with 2 repairs triggered by `observation_outside_window`).
+

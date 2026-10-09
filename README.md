@@ -16,6 +16,8 @@ gathers evidence. The model then drafts a structured plan, and deterministic
 Python code checks every cited forecast observation, every weather number, and
 every client rule before a human approves or rejects the plan.
 
+**Live demo:** https://huggingface.co/spaces/abhinavvathadi/ClearCast-AI
+
 This is a portfolio project. The two demo clients are **fictional**
 configurations, not customer deployments, and nothing ClearCast produces is
 evidence of campaign lift or ROI.
@@ -130,14 +132,14 @@ Contracts live in [`contracts/`](contracts/).
 ## Testing and evaluation
 
 ```bash
-python -m pytest                      # 129 offline tests (mocked MCP/LangGraph/providers)
+python -m pytest                      # 132 offline tests (mocked MCP/LangGraph/providers)
 python -m pytest -m integration       # 8 multi-process tests (Node gateway, launcher, MCP subprocess)
 npm --prefix gateway test             # 57 gateway tests
-python -m evaluation.run_eval         # 43 offline scenarios with independent rechecks
+python -m evaluation.run_eval         # 45 offline scenarios with independent rechecks
 ```
 
-The offline evaluation recorded 43/43 scenarios passing. Every recommended
-window (30) matched the raw fixture evidence, and every constrained window (20)
+The offline evaluation recorded 45/45 scenarios passing. Every recommended
+window (32) matched the raw fixture evidence, and every constrained window (20)
 satisfied its client's rules when rechecked independently; invalid outputs were
 rejected in 100% of the designed cases. These are deterministic software tests
 with scripted model outputs. They are **not** human evaluations of

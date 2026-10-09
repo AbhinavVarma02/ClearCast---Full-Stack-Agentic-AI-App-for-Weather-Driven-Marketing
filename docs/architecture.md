@@ -82,15 +82,19 @@ Deterministic checks then verify:
 * cited IDs exist in this request's forecast evidence and are consecutive;
 * the window lies inside the cited blocks, starts after the request time, and
   is at least one hour long;
-* claimed temperature, precipitation (in percent, not a fraction), wind, and AQI
-  match the cited evidence within small rounding tolerances;
+* the values the model restates for each cited block (temperature, precipitation
+  in percent rather than a fraction, wind, AQI) match that block's evidence within
+  small rounding tolerances; aggregates are computed by Python, not the model;
 * numbers in free text (°F, mph, % chance of rain) exist in the evidence;
 * hypotheses are hedged and no text claims KPIs, ROI, or guaranteed effects;
 * the evidence is not stale and was fetched for the resolved coordinates.
 
-Failures are sent back to the model as feedback, at most twice. A plan that
-still fails is returned as **Validation Failed** with its reasons and without
-recommended windows.
+Failures are sent back to the model as feedback, at most twice. Windows are
+verified independently: a window that still fails is moved to
+`rejected_windows` with its reasons and is never recommended, while fully
+verified windows remain. A plan with no fully verified window, or with
+plan-level failures (overlapping windows, unsupported claims in the summary),
+is returned as **Validation Failed** without recommended windows.
 
 ## Client configuration
 

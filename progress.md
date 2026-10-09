@@ -115,3 +115,11 @@
 - Updated MCP stdio subprocess launch to pass only `OPENWEATHERMAP_API_KEY` and `OPENAI_API_KEY` from the Space environment into the child process.
 - Verified deployed end-to-end generation via Gradio client after MCP subprocess env fix.
 - Test request for Baltimore coffee shop returned a full campaign strategy instead of `BadRequestError` or `RuntimeError`.
+
+2026-10-08
+
+- Upgraded ClearCast to an evidence-validated, client-configurable agent with a Node.js/TypeScript Fastify gateway, an internal FastAPI orchestrator, human review, offline evaluation, and GitHub Actions CI (GitHub branch `feature/fde-upgrade`).
+- Switched the Space `abhinavvathadi/ClearCast-AI` from the Gradio SDK to the Docker SDK; revisions `79c4c46`, `1c80e59`, `8997ce6` built and ran.
+- Live smoke tests on the Space produced validated plans from live OpenWeatherMap data; the first run exposed GPT-4o-mini temperature aggregation errors, fixed by per-block value restatement and window-level rejection.
+- Details: `docs/deployment.md`, `docs/evaluation.md`, `docs/technical_evidence_report.md`.
+

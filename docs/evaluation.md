@@ -30,24 +30,24 @@ python scripts/smoke_test.py --url http://127.0.0.1:7860 --expect-fixture   # ag
 
 ## Results recorded for this revision
 
-Measured locally on Windows 11, Python 3.13.2, Node.js 24.14 (CI uses
-Ubuntu, Python 3.13, Node.js 22):
+Measured locally on Windows 11, Python 3.13.2, Node.js 24.14, and confirmed by
+GitHub Actions on Ubuntu (Python 3.13, Node.js 22) for commit `109adb5`:
 
 | Suite | Result |
 |---|---|
 | Ruff lint and format check | clean |
 | Contract drift check | up to date |
 | Secret scan | passed |
-| `pytest` (default, offline) | 129 passed |
+| `pytest` (default, offline) | 132 passed |
 | `pytest -m integration` | 8 passed |
 | Gateway `vitest` | 57 passed (2 files) |
 | Gateway `tsc --noEmit` and ESLint (`strictTypeChecked`) | clean |
-| Offline evaluation | 43 scenarios, 43 passed |
+| Offline evaluation | 45 scenarios, 45 passed |
 | Docker image build and container smoke test (offline fixtures) | passed |
 
 ## Evaluation suite
 
-`evaluation/scenarios.py` defines 37 plan scenarios and 6 workflow scenarios.
+`evaluation/scenarios.py` defines 39 plan scenarios and 6 workflow scenarios.
 
 | Category | Scenarios |
 |---|---|
@@ -55,7 +55,7 @@ Ubuntu, Python 3.13, Node.js 22):
 | Outdoor-fitness campaigns (mild, rain, heat, cold, wind, poor air, missing fields, repair) | 8 |
 | General brief (storm week) | 1 |
 | Conflicting constraints (unsatisfiable, min > max) | 2 |
-| Invalid model output (window times, elapsed window, invented IDs, value mismatch, unit confusion, invented numbers, KPI claims, unhedged hypotheses) | 9 |
+| Invalid model output (window times, elapsed window, invented IDs, value mismatch, unit confusion, invented numbers, KPI claims, unhedged hypotheses; whole-plan and single-window corruption) | 11 |
 | Malformed structured output | 3 |
 | OpenWeatherMap failures (503, 429, timeout, invalid JSON, unknown location) | 5 |
 | Model failures (HTTP 500, timeout, skipped tools, recursion limit) | 4 |
@@ -67,11 +67,11 @@ Ubuntu, Python 3.13, Node.js 22):
 
 | Metric | Definition | Result |
 |---|---|---|
-| Scenario pass rate | Scenarios meeting every expectation | 43/43 (100%) |
+| Scenario pass rate | Scenarios meeting every expectation | 45/45 (100%) |
 | Schema-validity rate | Returned plans that round-trip through `CampaignPlanResponse` | 100% |
-| Forecast-grounding consistency | Recommended windows whose IDs, times, and claimed values match the **raw** fixture payloads, recomputed independently of `agent/validation.py` | 30/30 windows (100%) |
+| Forecast-grounding consistency | Recommended windows whose IDs, times, and claimed values match the **raw** fixture payloads, recomputed independently of `agent/validation.py` | 32/32 windows (100%) |
 | Hard-constraint compliance | Recommended windows for constrained clients that satisfy every rule when rechecked independently on raw data | 20/20 windows (100%) |
-| Invalid-output rejection rate | Scenarios with persistently invalid model output that end as Validation Failed | 100% |
+| Invalid-output rejection rate | Scenarios with persistently invalid model output where that output is never recommended (plan fails, or the corrupted window is rejected while verified windows remain) | 100% |
 | Repair success rate | Scenarios invalid on the first attempt that are valid after one repair | 100% |
 | Session-isolation correctness | Session scenarios passing | 100% |
 | API contract correctness | Shared request fixtures where Pydantic matches the expected verdict (TypeBox is checked by vitest) | 23/23 (100%) |
