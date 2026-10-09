@@ -117,6 +117,7 @@ class RequestMetrics:
     provider_error_categories: list[str] = field(default_factory=list)
     cache_hits: int = 0
     repair_attempts: int = 0
+    repair_reasons: list[str] = field(default_factory=list)
     step_limit_reached: bool = False
     _input_tokens: int = 0
     _output_tokens: int = 0
@@ -187,6 +188,7 @@ class RequestMetrics:
             provider_error_categories=sorted(set(self.provider_error_categories)),
             cache_hits=self.cache_hits,
             repair_attempts=self.repair_attempts,
+            repair_reasons=list(self.repair_reasons),
             recursion_limit=recursion_limit,
             step_limit_reached=self.step_limit_reached,
             validation_status=validation_status,
@@ -211,6 +213,7 @@ class RequestMetrics:
             "provider_error_categories": sorted(set(self.provider_error_categories)),
             "cache_hits": self.cache_hits,
             "repair_attempts": self.repair_attempts,
+            "repair_reasons": list(self.repair_reasons),
             "input_tokens": usage.input_tokens if usage else None,
             "output_tokens": usage.output_tokens if usage else None,
         }

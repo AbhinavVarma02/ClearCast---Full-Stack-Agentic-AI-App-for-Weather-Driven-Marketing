@@ -91,6 +91,7 @@ def main() -> int:
             "rejected_windows": len(plan["rejected_windows"]),
             "validation_errors": [e["code"] for e in plan["validation"]["errors"]],
             "repair_attempts": plan["validation"]["repair_attempts"],
+            "repair_reasons": plan["diagnostics"]["repair_reasons"],
             "tool_calls": plan["diagnostics"]["tool_calls"],
             "llm_calls": plan["diagnostics"]["llm_calls"],
             "duration_ms": plan["diagnostics"]["duration_ms"],

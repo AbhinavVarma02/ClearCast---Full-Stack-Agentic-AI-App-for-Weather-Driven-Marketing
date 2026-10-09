@@ -434,6 +434,9 @@ class Diagnostics(StrictModel):
     provider_error_categories: list[str]
     cache_hits: int
     repair_attempts: int
+    repair_reasons: list[str] = Field(
+        default_factory=list, description="Issue codes that triggered each repair attempt, in order."
+    )
     recursion_limit: int
     step_limit_reached: bool
     validation_status: str

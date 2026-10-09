@@ -924,6 +924,14 @@
           "title": "Repair Attempts",
           "type": "integer"
         },
+        "repair_reasons": {
+          "description": "Issue codes that triggered each repair attempt, in order.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Repair Reasons",
+          "type": "array"
+        },
         "request_id": {
           "title": "Request Id",
           "type": "string"

@@ -233,7 +233,7 @@ def render_diagnostics(plan: CampaignPlan) -> str:
         ("Tool errors", str(d.tool_errors)),
         ("Provider error categories", ", ".join(d.provider_error_categories) or "none"),
         ("Weather cache hits", str(d.cache_hits)),
-        ("Repair attempts", str(d.repair_attempts)),
+        ("Repair attempts", str(d.repair_attempts) + (f" ({'; '.join(d.repair_reasons)})" if d.repair_reasons else "")),
         ("Graph recursion limit", f"{d.recursion_limit}{' (reached)' if d.step_limit_reached else ''}"),
         ("Validation", d.validation_status),
         ("Review status", d.review_status),

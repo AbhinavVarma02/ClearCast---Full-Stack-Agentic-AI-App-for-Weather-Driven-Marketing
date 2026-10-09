@@ -399,6 +399,7 @@ class CampaignPlanningService:
             metrics.record_usage(result.usage)
 
             if result.parsed is None:
+                reason = "schema_invalid"
                 issue = _error("schema_invalid", result.parse_error or "The draft did not match the schema.")
                 last = (None, None, [issue])
                 feedback = (
@@ -413,9 +414,14 @@ class CampaignPlanningService:
                 if not validation.needs_repair:
                     break
                 feedback = repair_feedback(validation, assessments)
+                codes = [issue.code for issue in validation.grounding_errors]
+                if any(w.constraint_violations for w in validation.windows):
+                    codes.append("constraint_violation")
+                reason = ",".join(dict.fromkeys(codes))
             if attempt == self._max_repairs:
                 break
             metrics.repair_attempts += 1
+            metrics.repair_reasons.append(reason)
             messages = [
                 *messages,
                 AIMessage(content=result.raw_text or "(no output)"),

@@ -1034,6 +1034,7 @@
       "provider_error_categories": [],
       "cache_hits": 0,
       "repair_attempts": 0,
+      "repair_reasons": [],
       "recursion_limit": 10,
       "step_limit_reached": false,
       "validation_status": "passed",

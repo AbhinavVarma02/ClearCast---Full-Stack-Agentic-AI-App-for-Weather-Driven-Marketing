@@ -48,6 +48,7 @@ async def test_constraint_violation_is_repaired_and_never_overridden(weather, ma
     plan = (await service.create_plan(plan_request(client_id="demo_outdoor_fitness"), request_id="req-repair-1")).plan
     assert plan.status == ReviewStatus.PENDING_REVIEW
     assert plan.validation.repair_attempts == 1
+    assert plan.diagnostics.repair_reasons == ["constraint_violation"]
     for window in plan.windows:
         assert window.constraint_check.eligible
         for obs in window.evidence:
