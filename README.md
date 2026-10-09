@@ -67,43 +67,45 @@ All screenshots were taken from the deployed Space using the fictional Coffee Sh
 The whole application runs in one Docker container, and only the Gradio UI is public. The Node.js gateway is the API boundary in front of the Python service. It validates payloads with TypeBox, enforces a 16 KiB body limit, applies per-session and global rate limits, propagates request IDs, maps upstream errors to a single error format, and rejects any orchestrator response that breaks the published contract. The FastAPI orchestrator owns the agent, the provider calls, validation, and review state.
 
 ```mermaid
+---
+config:
+  layout: dagre
+---
 flowchart TB
-    browser(["Browser"])
+    reviewer(["Reviewer"])
 
-    subgraph space["Docker container on Hugging Face Spaces"]
+    subgraph container["Docker container on Hugging Face Spaces"]
         ui["Gradio UI<br/>public port 7860"]
-        gateway["Fastify gateway<br/>Node.js and TypeScript"]
+        gateway["Fastify gateway<br/>Node.js, TypeScript"]
 
         subgraph orchestrator["FastAPI orchestrator, Python"]
-            api["Internal API<br/>Pydantic validation, session lock"]
-            agent["LangGraph agent loop<br/>GPT-4o-mini chooses tools"]
-            ledger["Evidence ledger<br/>observations from this request"]
+            api["Internal API"]
+            agent["LangGraph agent<br/>GPT-4o-mini"]
+            mcp["FastMCP server<br/>4 weather tools"]
             profile["Client profile<br/>hard rules"]
-            drafting["Structured drafting<br/>GPT-4o-mini, strict JSON schema"]
-            checks{{"Deterministic checks<br/>grounding and client rules"}}
-            store["Plan store and review state<br/>scoped to the session"]
+            ledger["Evidence ledger"]
+            drafting["Structured draft<br/>GPT-4o-mini"]
+            checks["Deterministic<br/>checks"]
+            store["Plan and<br/>review state"]
         end
-
-        mcp["FastMCP weather server<br/>4 tools, stdio subprocess"]
     end
 
-    owm[("OpenWeatherMap API")]
+    owm[("OpenWeatherMap")]
 
-    browser --> ui
-    ui -- "brief, approval, ad-copy edits" --> gateway
-    gateway -- "validated request, internal token" --> api
-    api -- "new brief" --> agent
-    agent <-- "MCP tool calls" --> mcp
-    mcp -- "HTTPS with retries and cache" --> owm
+    reviewer --> ui
+    ui -- "brief, review actions" --> gateway
+    gateway -- "validated request" --> api
+    api --> agent
+    agent <-- "MCP, stdio" --> mcp
+    mcp -- "HTTPS" --> owm
     agent -- "tool results" --> ledger
+    api --> profile
     ledger --> drafting
     profile --> drafting
     drafting --> checks
-    ledger -.-> checks
-    profile -.-> checks
-    checks -- "failed: feedback, up to 2 repairs" --> drafting
-    checks -- "Pending Review or Validation Failed" --> store
-    api -- "approve, reject, revise" --> store
+    checks -- "Pending Review or<br/>Validation Failed" --> store
+    api -- "approve, reject,<br/>revise" --> store
+    checks -. "repair, max 2" .-> drafting
 ```
 
 Gathering evidence and drafting the plan are separate steps on purpose. The agent only collects data. The draft is written afterwards against a ledger that Python built from the recorded tool outputs, so the model never gets to supply its own evidence. Request flow, the agent loop, and the grounding rules are covered in detail in [docs/architecture.md](docs/architecture.md).
