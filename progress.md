@@ -1,0 +1,125 @@
+2026-07-05
+
+- Started Hugging Face Spaces deployment preparation for ClearCast AI.
+- Inspected the workspace root without opening or reading `.env`.
+- Found expected project directories including `frontend`, `agent`, and `mcp_server`.
+- Error: `git status --short` failed with `fatal: not a git repository (or any of the parent directories): .git`.
+
+- Inspected `.git` metadata only; `.git/HEAD` is missing, so the workspace is not a valid Git checkout yet.
+- Confirmed `frontend`, `agent`, and `mcp_server` currently contain only cache directories and no source files.
+- Error: first attempt to append this progress update with `apply_patch` failed with a sandbox helper error.
+- Error: `git init` failed because Git could not copy its template `description` file into `.git` due to permission denied.
+- Inspected `.git` ACLs and found explicit deny entries that block writing Git metadata.
+- Confirmed `.git/description` is missing.
+- Reset permissions on `.git` successfully so Git metadata can be repaired.
+- Error: `git init` still failed after ACL reset with permission denied writing `.git/description`.
+- Re-ran `git init` with approved escalation and repaired the local Git metadata.
+- Ran `git status --short` successfully after Git repair.
+- Warning: Git reported inaccessible local ignore/cache paths; no `.env` content was opened or read.
+- Error: `git remote add origin` failed because `.git/config` could not be locked due to permission denied.
+- Added the source GitHub remote as `origin`.
+- Fetched `origin/main` from the source GitHub repository successfully.
+- Checked out source branch `origin/main` into local branch `main` successfully.
+- User clarified GitHub must be used only as the source and must not receive deployment changes.
+- Confirmed `frontend/app.py` defines a Gradio `app` object and currently builds the agent during import.
+- Error: attempted to inspect `agent\mcp_client.py`, but that file does not exist in the source tree.
+- Inspected runtime files excluding `.env`: `frontend/app.py`, `agent/graph.py`, `agent/weather_client.py`, `mcp_server/weather_api.py`, `mcp_server/weather_server.py`, `requirements.txt`, `.gitignore`, and README/deployment docs.
+- Error: `.pytest_cache` ACL inspection failed with an unauthorized operation.
+- Error: `apply_patch` remains blocked by a workspace refresh sandbox helper error.
+- Reset permissions on ignored `.pytest_cache` successfully.
+- Error: `apply_patch` still failed after `.pytest_cache` permission reset, so deployment file edits will use scoped PowerShell writes.
+- Added root `app.py` as the Hugging Face Spaces entrypoint.
+- Refactored `frontend/app.py` to build the LangGraph agent lazily and return a clear user-facing message when required secrets are missing.
+- Updated dotenv loading to avoid overriding production environment variables.
+- Updated OpenWeatherMap missing-key and HTTP error messages so key values are not exposed.
+- Added Hugging Face Spaces YAML metadata to the top of `README.md`.
+- Added missing runtime dependencies `langchain-core` and `requests` to `requirements.txt`.
+- Replaced malformed `.gitignore` contents with deployment-safe ignore rules.
+- Error: review showed the first `frontend/app.py` lazy-startup replacement did not apply because newline escaping did not match the file.
+- Corrected `frontend/app.py` lazy startup, missing-secret handling, Blocks theme/CSS construction, and local launch call.
+- Error: review found literal newline escape text in the `gr.Blocks` call and unapplied weather error-message replacements.
+- Fixed the `gr.Blocks` call formatting and sanitized OpenWeatherMap placeholder/HTTP error messages.
+- Added spacing between the lazy graph helper and request handler.
+- Confirmed `.env` is not present in the workspace; no `.env` file was opened or read.
+- Existing `.venv` directory does not contain `.venv\Scripts\python.exe`, so verification will use `python` on PATH.
+- Error: sandboxed `python -m pip install -r requirements.txt` failed because network socket access was forbidden.
+- Installed dependencies from `requirements.txt` successfully after approved network access; `pytest-asyncio` was installed and other runtime dependencies were already satisfied.
+- `python -m compileall app.py frontend agent mcp_server` passed.
+- Error: importing `app` failed locally with `ModuleNotFoundError: No module named gradio` even after pip reported Gradio installed in the user site.
+- Import check succeeded outside the sandbox and returned a Gradio `Blocks` object, but Gradio 6 warned that theme/CSS belong on `launch()`.
+- Moved theme/CSS launch handling into `frontend.app.launch()` and updated root `app.py` to use it.
+- `python -m compileall app.py frontend agent mcp_server` passed after deployment edits.
+- Imported root `app.py` successfully and confirmed it exposes a Gradio `Blocks` object.
+- Verified missing `OPENWEATHERMAP_API_KEY` and `OPENAI_API_KEY` return a clear user-facing error without crashing.
+- `python app.py` launch test stayed running for 12 seconds; stopped the local Gradio process after verification.
+- `git status --short` shows only deployment-safe source files plus `progress.md`; `.env` is not listed.
+- `git ls-files -- .env` returned no tracked `.env` file.
+- Source remote `origin` points to GitHub and will be used only for fetch/source context.
+- Disabled the local push URL for `origin` to prevent accidental pushes to GitHub.
+- Added Hugging Face Space remote `space` pointing to `https://huggingface.co/spaces/abhinavvathadi/ClearCast-AI`.
+- Verified source references required secrets by name only: `OPENWEATHERMAP_API_KEY` and `OPENAI_API_KEY`.
+- Secret-pattern path scan excluding `.env`, `.git`, virtualenvs, caches, and bytecode returned no matching files.
+- Verified remotes: `origin` fetches from GitHub with push disabled locally; `space` points to the Hugging Face Space for push.
+- Error: `git diff --check` found new blank lines at EOF in `README.md`, `agent/graph.py`, and `mcp_server/weather_api.py`.
+- Trimmed extra EOF blank lines from `README.md`, `agent/graph.py`, and `mcp_server/weather_api.py`.
+- Fixed PowerShell encoding fallout by restoring README content from the Git blob and rewriting edited files as UTF-8 without BOM.
+- Rewrote README front-matter emoji using Unicode escapes to preserve the actual Hugging Face emoji value.
+- Error: Python README emoji `repr` verification failed because the Windows console could not encode the emoji output.
+- `git diff --check` passed after encoding and EOF cleanup.
+- Verified README front-matter emoji bytes as `\U0001f326\ufe0f` using ASCII-safe output.
+- Final `python -m compileall app.py frontend agent mcp_server` passed after encoding repair.
+- Error: final escalated import and missing-secret checks were rejected by the approval system due to Codex usage limit; earlier package-backed import, missing-secret, and launch checks had already passed before the encoding-only repair.
+- Final pre-stage status showed only deployment files and `progress.md`; `.env` was not listed.
+- Final secret-pattern path scan excluding `.env`, `.git`, virtualenvs, caches, and bytecode returned no matching files.
+- Final `git diff --check` passed before staging.
+- Error: `git add` failed because `.git/index.lock` could not be created due to permission denied.
+- Error: escalated `git add` was rejected by the approval system due to Codex usage limit.
+- Deployment changes remain in the working tree and have not been committed or pushed to GitHub or Hugging Face.
+- Resumed deployment after approval/usage blocker.
+- Rechecked status: only deployment files plus `progress.md` are modified or untracked.
+- Confirmed `.env` is absent and not tracked.
+- Confirmed `origin` push URL is disabled and `space` points to the Hugging Face Space.
+- Error: sandboxed `git add` failed again because `.git/index.lock` could not be created due to permission denied.
+- Staged deployment-safe files successfully with approved Git metadata write.
+- Verified staged files: `.gitignore`, `README.md`, `agent/graph.py`, `app.py`, `frontend/app.py`, `mcp_server/weather_api.py`, `progress.md`, and `requirements.txt`.
+- Verified `.env` is not staged.
+- Verified staged diff passes `git diff --cached --check`.
+- Created local deployment commit `962a4cb` with message `Prepare ClearCast AI for Hugging Face Spaces deployment`.
+- Error: `git push space main` was rejected because the Hugging Face Space remote contains work not present locally and requires fetching/integration first.
+- Fetched the current Hugging Face Space branch `space/main` successfully.
+- Error: merging `space/main` produced an expected add/add conflict in `README.md`; resolving by keeping the deployment README and preserving Space `.gitattributes`.
+- Completed merge commit `ef927c0` integrating `space/main`; kept deployment README and preserved Space `.gitattributes`.
+- Pushed deployment commits to Hugging Face Space successfully; `space/main` advanced to `17c3c38`.
+- Verified Hugging Face Space page returns HTTP 200.
+- Verified Hugging Face API reports Space sha `17c3c38d0ca1d5a275bec9281c1369ad31b16a59`, sdk `gradio`, and public visibility.
+- Remaining runtime issue: Hugging Face reports stage `PAUSED` with error `Quota exceeded for flavor cpu-basic (requested=1): current=4, limit=3`.
+- Received Hugging Face startup log showing Gradio SSR enabled and an ignored Python 3.13 asyncio invalid file descriptor cleanup exception.
+- Verified Gradio `Blocks.launch` supports `ssr_mode`.
+- Error: `apply_patch` failed again due to the Windows sandbox helper refresh issue, so the tiny launch edit was applied with a scoped PowerShell replacement.
+- Error: review found PowerShell added a UTF-8 BOM and an extra EOF blank line to `frontend/app.py`; cleaning with UTF-8 without BOM.
+- `python -m compileall app.py frontend agent mcp_server` passed after disabling Gradio SSR.
+- Imported root `app.py` successfully after disabling Gradio SSR.
+- Confirmed `.env` is absent and not tracked after the SSR fix.
+- Short `python app.py` launch check stayed running and did not print the SSR/Node proxy startup line.
+- Pushed Gradio SSR startup fix to Hugging Face Space at commit `a182785`.
+- Verified Hugging Face API reports repo sha `a1827854fd018bf08ac32e496520dbf748b9f0f1`.
+- Verified Hugging Face runtime stage is `RUNNING` on `cpu-basic`, with runtime sha `a1827854fd018bf08ac32e496520dbf748b9f0f1`.
+- Investigated user-reported `BadRequestError` on campaign generation.
+- Verified local LangChain-bound OpenAI tool payload included a nullable/default `country_code` schema generated by our MCP bridge.
+- Verified the MCP server schema defines `country_code` as a plain string with default empty string.
+- Checked official OpenAI docs: current function-calling examples use `gpt-5.5`.
+- Updated OpenAI model to `gpt-5.5` and changed MCP optional argument schema generation to preserve plain defaults instead of nullable unions.
+- Verified fixed OpenAI-bound tool payload: `country_code` is now a plain string with default empty string, not a nullable union.
+- Added sanitized user-facing exception details to diagnose the new post-OpenAI `RuntimeError` without exposing API keys.
+- Deployed diagnostic request showed `Error executing tool geocode_city: OPENWEATHERMAP_API_KEY environment variable is missing`.
+- Updated MCP stdio subprocess launch to pass only `OPENWEATHERMAP_API_KEY` and `OPENAI_API_KEY` from the Space environment into the child process.
+- Verified deployed end-to-end generation via Gradio client after MCP subprocess env fix.
+- Test request for Baltimore coffee shop returned a full campaign strategy instead of `BadRequestError` or `RuntimeError`.
+
+2026-10-08
+
+- Upgraded ClearCast to an evidence-validated, client-configurable agent with a Node.js/TypeScript Fastify gateway, an internal FastAPI orchestrator, human review, offline evaluation, and GitHub Actions CI (GitHub branch `feature/fde-upgrade`).
+- Switched the Space `abhinavvathadi/ClearCast-AI` from the Gradio SDK to the Docker SDK; revisions `79c4c46`, `1c80e59`, `8997ce6` built and ran.
+- Live smoke tests on the Space produced validated plans from live OpenWeatherMap data; the first run exposed GPT-4o-mini temperature aggregation errors, fixed by per-block value restatement and window-level rejection.
+- Details: `docs/deployment.md`, `docs/evaluation.md`, `docs/technical_evidence_report.md`.
+

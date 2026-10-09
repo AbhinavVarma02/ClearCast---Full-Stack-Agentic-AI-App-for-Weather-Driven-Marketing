@@ -1,0 +1,39 @@
+{
+  "$id": "https://clearcast.local/contracts/review_request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "decision": {
+      "enum": [
+        "approve",
+        "reject"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "note": {
+      "default": "",
+      "maxLength": 500,
+      "pattern": "^[^\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]*$",
+      "title": "Note",
+      "type": "string"
+    },
+    "plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Hash",
+      "type": "string"
+    },
+    "session_id": {
+      "pattern": "^[A-Za-z0-9_-]{16,128}$",
+      "title": "Session Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "decision",
+    "plan_hash"
+  ],
+  "title": "ReviewRequest",
+  "type": "object"
+}

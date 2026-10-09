@@ -1,0 +1,81 @@
+{
+  "_comment": "Fictional demo client profiles. These are configuration for one shared agent, not separate agents, and they do not represent real customer deployments.",
+  "profiles": [
+    {
+      "client_id": "general",
+      "display_name": "General brief (no client profile)",
+      "fictional": false,
+      "business_type": "",
+      "business_objective": "Find weather-driven campaign moments for the brief as written.",
+      "default_campaign_goal": "",
+      "default_tone": "Friendly",
+      "requires_air_quality": false,
+      "constraints": {},
+      "preferences": {
+        "preferred_conditions": "",
+        "promotion_ideas": [],
+        "notes": "No client-specific rules; only constraints entered in the form are enforced."
+      }
+    },
+    {
+      "client_id": "demo_coffee_shop",
+      "display_name": "Demo Client A - Coffee Shop (fictional)",
+      "fictional": true,
+      "business_type": "Coffee shop",
+      "business_objective": "Increase morning visits.",
+      "default_campaign_goal": "Increase morning visits",
+      "default_tone": "Friendly",
+      "requires_air_quality": false,
+      "constraints": {
+        "allowed_hours": [{"start_hour": 6, "end_hour": 11}],
+        "exclusion_windows": [
+          {
+            "weekdays": ["Sun"],
+            "start_hour": 6,
+            "end_hour": 8,
+            "reason": "Store opens at 8 AM on Sundays"
+          }
+        ]
+      },
+      "preferences": {
+        "preferred_conditions": "Cool (below 60 F) or rainy mornings suit warm-drink promotions; warm mornings suit iced drinks.",
+        "promotion_ideas": [
+          "Rainy-morning warm drink offer",
+          "Cool-morning pastry pairing",
+          "Warm-morning iced coffee push"
+        ],
+        "notes": "Rain is an opportunity, not a blocker, for this client."
+      }
+    },
+    {
+      "client_id": "demo_outdoor_fitness",
+      "display_name": "Demo Client B - Outdoor Fitness Studio (fictional)",
+      "fictional": true,
+      "business_type": "Outdoor fitness studio",
+      "business_objective": "Promote outdoor classes.",
+      "default_campaign_goal": "Promote outdoor class signups",
+      "default_tone": "Urgent",
+      "requires_air_quality": true,
+      "constraints": {
+        "allowed_hours": [
+          {"start_hour": 6, "end_hour": 9},
+          {"start_hour": 17, "end_hour": 20}
+        ],
+        "min_temperature_f": 45,
+        "max_temperature_f": 88,
+        "max_precipitation_probability_pct": 30,
+        "max_wind_speed_mph": 15,
+        "max_aqi": 2
+      },
+      "preferences": {
+        "preferred_conditions": "Dry, mild, low-wind mornings or evenings with good air quality.",
+        "promotion_ideas": [
+          "Sunrise bootcamp",
+          "After-work outdoor HIIT",
+          "Bring-a-friend outdoor class"
+        ],
+        "notes": "Outdoor classes only run when every hard constraint is satisfied."
+      }
+    }
+  ]
+}

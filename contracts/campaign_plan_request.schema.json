@@ -1,0 +1,256 @@
+{
+  "$defs": {
+    "CampaignBrief": {
+      "additionalProperties": false,
+      "description": "The four original campaign inputs.",
+      "properties": {
+        "business_type": {
+          "maxLength": 80,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]*[^\\x00-\\x20\\x7f][^\\x00-\\x1f\\x7f]*$",
+          "title": "Business Type",
+          "type": "string"
+        },
+        "campaign_goal": {
+          "default": "",
+          "maxLength": 300,
+          "pattern": "^[^\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]*$",
+          "title": "Campaign Goal",
+          "type": "string"
+        },
+        "location": {
+          "maxLength": 120,
+          "minLength": 1,
+          "pattern": "^[^\\x00-\\x1f\\x7f]*[^\\x00-\\x20\\x7f][^\\x00-\\x1f\\x7f]*$",
+          "title": "Location",
+          "type": "string"
+        },
+        "tone": {
+          "default": "Friendly",
+          "enum": [
+            "Friendly",
+            "Urgent",
+            "Playful",
+            "Premium"
+          ],
+          "title": "Tone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location",
+        "business_type"
+      ],
+      "title": "CampaignBrief",
+      "type": "object"
+    },
+    "ClientConstraints": {
+      "additionalProperties": false,
+      "description": "Hard constraints verified by deterministic Python rules, never by the model.",
+      "properties": {
+        "allowed_hours": {
+          "items": {
+            "$ref": "#/$defs/HourRange"
+          },
+          "maxItems": 6,
+          "title": "Allowed Hours",
+          "type": "array"
+        },
+        "exclusion_windows": {
+          "items": {
+            "$ref": "#/$defs/ExclusionWindow"
+          },
+          "maxItems": 14,
+          "title": "Exclusion Windows",
+          "type": "array"
+        },
+        "max_aqi": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Aqi"
+        },
+        "max_precipitation_probability_pct": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Precipitation Probability Pct"
+        },
+        "max_temperature_f": {
+          "anyOf": [
+            {
+              "maximum": 140,
+              "minimum": -60,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Temperature F"
+        },
+        "max_wind_speed_mph": {
+          "anyOf": [
+            {
+              "maximum": 150,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Wind Speed Mph"
+        },
+        "min_temperature_f": {
+          "anyOf": [
+            {
+              "maximum": 140,
+              "minimum": -60,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Temperature F"
+        }
+      },
+      "title": "ClientConstraints",
+      "type": "object"
+    },
+    "ExclusionWindow": {
+      "additionalProperties": false,
+      "description": "Local weekday hours when the client must not run a campaign.",
+      "properties": {
+        "end_hour": {
+          "maximum": 24,
+          "minimum": 1,
+          "title": "End Hour",
+          "type": "integer"
+        },
+        "reason": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Reason",
+          "type": "string"
+        },
+        "start_hour": {
+          "maximum": 23,
+          "minimum": 0,
+          "title": "Start Hour",
+          "type": "integer"
+        },
+        "weekdays": {
+          "items": {
+            "enum": [
+              "Mon",
+              "Tue",
+              "Wed",
+              "Thu",
+              "Fri",
+              "Sat",
+              "Sun"
+            ],
+            "type": "string"
+          },
+          "maxItems": 7,
+          "minItems": 1,
+          "title": "Weekdays",
+          "type": "array"
+        }
+      },
+      "required": [
+        "weekdays",
+        "start_hour",
+        "end_hour"
+      ],
+      "title": "ExclusionWindow",
+      "type": "object"
+    },
+    "HourRange": {
+      "additionalProperties": false,
+      "description": "A local-time hour range [start_hour, end_hour).",
+      "properties": {
+        "end_hour": {
+          "maximum": 24,
+          "minimum": 1,
+          "title": "End Hour",
+          "type": "integer"
+        },
+        "start_hour": {
+          "maximum": 23,
+          "minimum": 0,
+          "title": "Start Hour",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_hour",
+        "end_hour"
+      ],
+      "title": "HourRange",
+      "type": "object"
+    }
+  },
+  "$id": "https://clearcast.local/contracts/campaign_plan_request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "brief": {
+      "$ref": "#/$defs/CampaignBrief"
+    },
+    "client_id": {
+      "default": "general",
+      "enum": [
+        "general",
+        "demo_coffee_shop",
+        "demo_outdoor_fitness"
+      ],
+      "title": "Client Id",
+      "type": "string"
+    },
+    "constraints": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClientConstraints"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Replaces the client profile's default constraints when provided."
+    },
+    "session_id": {
+      "pattern": "^[A-Za-z0-9_-]{16,128}$",
+      "title": "Session Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "brief"
+  ],
+  "title": "CampaignPlanRequest",
+  "type": "object"
+}

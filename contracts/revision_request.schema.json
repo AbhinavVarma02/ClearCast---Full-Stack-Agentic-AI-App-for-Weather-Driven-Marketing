@@ -1,0 +1,45 @@
+{
+  "$id": "https://clearcast.local/contracts/revision_request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Reviewer edits to ad copy; any edit invalidates an earlier approval.",
+  "properties": {
+    "ad_copy": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "description": "Window id -> replacement ad copy lines (1-3 lines per window).",
+      "maxProperties": 3,
+      "minProperties": 1,
+      "title": "Ad Copy",
+      "type": "object"
+    },
+    "base_plan_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Base Plan Hash",
+      "type": "string"
+    },
+    "note": {
+      "default": "",
+      "maxLength": 500,
+      "pattern": "^[^\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]*$",
+      "title": "Note",
+      "type": "string"
+    },
+    "session_id": {
+      "pattern": "^[A-Za-z0-9_-]{16,128}$",
+      "title": "Session Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_id",
+    "base_plan_hash",
+    "ad_copy"
+  ],
+  "title": "RevisionRequest",
+  "type": "object"
+}

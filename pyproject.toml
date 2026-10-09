@@ -1,0 +1,45 @@
+[project]
+name = "clearcast"
+version = "2.0.0"
+description = "Weather-driven campaign planning: LangGraph + MCP agent, Python orchestration API, Node.js gateway, Gradio UI."
+requires-python = ">=3.13"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = ["gateway", "notebooks", ".venv", "KB"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "S", "RUF"]
+ignore = [
+    "S101",    # assert is used in tests and for internal invariants
+    "S311",    # random jitter for backoff is not security-sensitive
+    "RUF001",  # en dashes and degree signs are intentional in report text
+    "RUF002",
+    "RUF003",
+    "E501",    # formatter owns line length
+]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Header", "fastapi.Path"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S104", "S105", "S106", "S108", "S603", "S607", "S310", "RUF012"]
+"evaluation/**" = ["S105", "S106"]
+"deploy/launcher.py" = ["S603", "S310"]
+"scripts/check_secrets.py" = ["S603", "S607"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-m 'not integration' -p no:cacheprovider"
+markers = [
+    "integration: multi-process tests that need Node.js and the built gateway (gateway/dist)",
+]
+filterwarnings = [
+    "ignore:Field 'lifespan' has an incomplete definition:UserWarning",
+]

@@ -1,0 +1,6 @@
+# Development and CI tooling. requirements-dev.txt is generated with:
+#   uv pip compile requirements-dev.in --universal --python-version 3.13 -o requirements-dev.txt
+-c requirements.txt
+pytest==9.0.2
+pytest-asyncio==1.4.0
+ruff==0.16.10

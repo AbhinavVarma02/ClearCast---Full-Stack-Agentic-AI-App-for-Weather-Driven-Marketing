@@ -1,11 +1,15 @@
-@'
 # Secrets
 .env
 .env.*
 !.env.example
 
-# Knowledge base
+# Local data
 KB/
+data/
+local_data/
+*.db
+*.sqlite
+*.sqlite3
 
 # Local tooling
 .agents/
@@ -22,13 +26,25 @@ __pycache__/
 .coverage
 htmlcov/
 
-# Builds and logs
+# Builds, logs, and temporary files
 dist/
 build/
 *.egg-info/
 *.log
+*.tmp
+*.temp
+tmp/
+temp/
 
 # OS files
 .DS_Store
 Thumbs.db
-'@ | Set-Content -Encoding utf8 .gitignore
+
+# Node.js gateway
+gateway/node_modules/
+gateway/dist/
+gateway/coverage/
+
+# Tooling caches and generated evaluation output
+.ruff_cache/
+eval-results/
