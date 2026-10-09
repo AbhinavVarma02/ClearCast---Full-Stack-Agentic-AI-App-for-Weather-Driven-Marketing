@@ -19,10 +19,23 @@ CLEARCAST_THEME = gr.themes.Base(
     ],
 )
 
+# ClearCast is a dark-only design. Gradio swaps component colors with the
+# browser's light/dark setting, which left labels, inputs, and tabs unreadable
+# on the dark canvas in light mode, so light mode reuses the dark values.
+# A dark value of None already means "same as light" and is left alone.
+CLEARCAST_THEME.set(
+    **{
+        name.removesuffix("_dark"): value
+        for name, value in vars(CLEARCAST_THEME).items()
+        if name.endswith("_dark") and value is not None
+    }
+)
+
 CLEARCAST_CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
 :root {
+    color-scheme: dark;
     --cc-bg: #050810;
     --cc-surface: rgba(15, 23, 42, 0.66);
     --cc-surface-strong: rgba(17, 24, 39, 0.92);
