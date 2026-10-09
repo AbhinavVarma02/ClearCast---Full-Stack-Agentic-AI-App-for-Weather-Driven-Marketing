@@ -4,7 +4,9 @@
 
 ClearCast runs as a single Docker container on the existing Space
 `abhinavvathadi/ClearCast-AI` (https://huggingface.co/spaces/abhinavvathadi/ClearCast-AI).
-The README front matter selects `sdk: docker` and `app_port: 7860`.
+The Space's own README front matter selects `sdk: docker` and `app_port: 7860`.
+The GitHub README leaves that front matter out, so a deploy must never replace
+the Space's README with this repository's.
 
 ```text
 Container (user 1000)
@@ -36,8 +38,11 @@ Container (user 1000)
 
 ### Deploy
 
+Upload the branch's tracked files with `huggingface_hub`, keeping the Space's README:
+
 ```bash
-git push space <branch>:main      # remote: https://huggingface.co/spaces/abhinavvathadi/ClearCast-AI
+mkdir -p /tmp/clearcast-space && git archive <branch> | tar -x -C /tmp/clearcast-space
+python -c "from huggingface_hub import HfApi; HfApi().upload_folder(folder_path='/tmp/clearcast-space', repo_id='abhinavvathadi/ClearCast-AI', repo_type='space', ignore_patterns=['README.md'])"
 ```
 
 ### Verify
