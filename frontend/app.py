@@ -313,6 +313,16 @@ def on_load(session_id: str | None) -> tuple[str, str]:
     return session_id, report_header_html("warming", "Agent warming up")
 
 
+def clear_number_constraints() -> tuple[None, None, None, None]:
+    """Keep the numeric constraint fields blank (unset) on page load.
+
+    Gradio 6.6 shows a Number created with value=None as 0 once it is rendered (here, when the
+    constraints accordion opens) and then submits 0, which became 0 °F, 0 %, and 0 mph hard
+    limits. A None sent by an event keeps the field blank.
+    """
+    return None, None, None, None
+
+
 def generate_plan(
     client_id,
     location,
@@ -585,6 +595,7 @@ with gr.Blocks(title="ClearCast", fill_width=True) as app:
         api_name="revise_plan",
     )
     app.load(fn=on_load, inputs=[session_state], outputs=[session_state, report_header], api_name=False)
+    app.load(fn=clear_number_constraints, outputs=[min_temp, max_temp, max_precip, max_wind], api_name=False)
 
 
 def launch(**kwargs):

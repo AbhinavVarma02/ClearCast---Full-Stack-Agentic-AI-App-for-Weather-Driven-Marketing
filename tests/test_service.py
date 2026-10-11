@@ -231,3 +231,15 @@ async def test_a_window_that_keeps_failing_is_rejected_while_verified_windows_su
     assert "fc-20991231T0000Z" not in {oid for w in plan.windows for oid in w.observation_ids}
     rejected = [w for w in plan.validation.warnings if w.code == "unknown_observation"]
     assert rejected and rejected[0].message.startswith("Rejected window:")
+
+
+async def test_report_says_why_a_grounding_failure_was_rejected(weather, make_service):
+    weather("baseline_mild")
+    fake = ScriptedOpenAI(draft_policies=["first:invented_id"])
+    response = await make_service(fake).create_plan(plan_request(), request_id="req-partial-2")
+    window = response.plan.rejected_windows[0]
+    assert window.grounding.issues and not window.constraint_check.violations
+    lines = response.report_markdown.splitlines()
+    assert "### Rejected windows" in lines
+    line = next(text for text in lines if text.startswith(f"- {window.window_id} · "))
+    assert "Grounding failed:" in line and window.grounding.issues[0] in line

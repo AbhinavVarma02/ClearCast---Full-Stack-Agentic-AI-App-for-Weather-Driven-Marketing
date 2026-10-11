@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from agent.schemas import REVIEW_STATUS_LABELS, CampaignPlan, ReviewStatus
+from agent.schemas import REVIEW_STATUS_LABELS, CampaignPlan, CampaignWindow, ReviewStatus
 
 STATUS_NOTES = {
     ReviewStatus.PENDING_REVIEW: "Validated against retrieved weather evidence. Awaiting human review.",
@@ -37,6 +37,18 @@ def _local(dt) -> str:
 
 def status_label(plan: CampaignPlan) -> str:
     return REVIEW_STATUS_LABELS[plan.status]
+
+
+def rejection_reason(window: CampaignWindow) -> str:
+    """Why a window was not recommended: its failed grounding checks and broken client rules."""
+    reasons = []
+    if window.grounding.issues or not window.grounding.verified:
+        issues = " ".join(_cell(issue) for issue in window.grounding.issues)
+        reasons.append(f"Grounding failed: {issues or 'the cited evidence could not be verified.'}")
+    if window.constraint_check.violations:
+        violations = "; ".join(_cell(v) for v in window.constraint_check.violations)
+        reasons.append(f"Hard constraints violated: {violations}.")
+    return " ".join(reasons) or "Did not pass validation."
 
 
 def render_report(plan: CampaignPlan) -> str:
@@ -104,11 +116,11 @@ def render_report(plan: CampaignPlan) -> str:
         ] or ["- No specific weather risks were identified."]
         lines.append("")
         if plan.rejected_windows:
-            lines += ["### Windows rejected by hard client constraints", ""]
-            for window in plan.rejected_windows:
-                lines.append(
-                    f"- {_cell(window.title)}: " + "; ".join(_cell(v) for v in window.constraint_check.violations)
-                )
+            lines += ["### Rejected windows", ""]
+            lines += [
+                f"- {window.window_id} · {_cell(window.title)}: {rejection_reason(window)}"
+                for window in plan.rejected_windows
+            ]
             lines.append("")
 
     lines += ["## Forecast Summary", ""]
