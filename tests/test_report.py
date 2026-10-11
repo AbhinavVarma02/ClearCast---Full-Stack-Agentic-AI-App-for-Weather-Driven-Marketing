@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 
 from agent.report import rejection_reason, render_report
-from agent.schemas import CampaignPlan, ConstraintCheck, GroundingCheck
+from agent.schemas import CampaignPlan, ConstraintCheck, GroundingCheck, ReviewStatus
 from tests.helpers import PROJECT_ROOT
 
 SAMPLE = json.loads((PROJECT_ROOT / "contracts" / "fixtures" / "sample_plan_response.json").read_text("utf-8"))
@@ -42,3 +42,21 @@ def test_unverified_window_without_issue_text_still_gets_a_reason():
     report = render_report(plan_with_rejected_second_window(grounding=GroundingCheck(verified=False, issues=[])))
     assert "- w2 · " in report
     assert "Grounding failed: the cited evidence could not be verified." in report
+
+
+def test_failed_plan_lists_rejected_windows_with_constraint_reasons():
+    passing = plan_with_rejected_second_window(constraint_check=ConstraintCheck(eligible=False, violations=[WIND]))
+    # A failed plan recommends nothing, so even a window that passed its own checks is rejected.
+    plan = passing.model_copy(
+        update={
+            "status": ReviewStatus.VALIDATION_FAILED,
+            "windows": [],
+            "rejected_windows": [*passing.windows, *passing.rejected_windows],
+        }
+    )
+    lines = render_report(plan).splitlines()
+    assert "## Validation Failed" in lines and "### Rejected windows" in lines
+    assert next(t for t in lines if t.startswith("- w2 · ")).endswith(f": Hard constraints violated: {WIND}.")
+    assert next(t for t in lines if t.startswith("- w1 · ")).endswith(
+        ": Passed its own checks; not recommended because the plan failed validation."
+    )

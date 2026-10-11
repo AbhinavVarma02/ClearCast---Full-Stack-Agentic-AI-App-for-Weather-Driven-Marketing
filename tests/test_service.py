@@ -243,3 +243,17 @@ async def test_report_says_why_a_grounding_failure_was_rejected(weather, make_se
     assert "### Rejected windows" in lines
     line = next(text for text in lines if text.startswith(f"- {window.window_id} · "))
     assert "Grounding failed:" in line and window.grounding.issues[0] in line
+
+
+async def test_failed_plan_report_says_why_each_window_was_rejected(weather, make_service):
+    weather("baseline_mild")
+    fake = ScriptedOpenAI(draft_policies=["invented_id"])
+    response = await make_service(fake).create_plan(plan_request(), request_id="req-invalid-2")
+    assert response.plan.status == ReviewStatus.VALIDATION_FAILED and response.plan.rejected_windows
+    lines = response.report_markdown.splitlines()
+    assert "### Rejected windows" in lines
+    for window in response.plan.rejected_windows:
+        line = next(text for text in lines if text.startswith(f"- {window.window_id} · "))
+        assert line.split(": ", 1)[1].strip()  # never an empty reason
+        for issue in window.grounding.issues:
+            assert issue in line

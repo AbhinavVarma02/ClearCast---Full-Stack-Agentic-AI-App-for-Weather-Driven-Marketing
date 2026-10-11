@@ -48,7 +48,19 @@ def rejection_reason(window: CampaignWindow) -> str:
     if window.constraint_check.violations:
         violations = "; ".join(_cell(v) for v in window.constraint_check.violations)
         reasons.append(f"Hard constraints violated: {violations}.")
-    return " ".join(reasons) or "Did not pass validation."
+    # Only possible when the plan itself failed: a window can pass its own checks and still be dropped.
+    return " ".join(reasons) or "Passed its own checks; not recommended because the plan failed validation."
+
+
+def _rejected_window_lines(plan: CampaignPlan) -> list[str]:
+    if not plan.rejected_windows:
+        return []
+    return [
+        "### Rejected windows",
+        "",
+        *(f"- {w.window_id} · {_cell(w.title)}: {rejection_reason(w)}" for w in plan.rejected_windows),
+        "",
+    ]
 
 
 def render_report(plan: CampaignPlan) -> str:
@@ -73,6 +85,7 @@ def render_report(plan: CampaignPlan) -> str:
             "summarised below so the brief or constraints can be adjusted.",
             "",
         ]
+        lines += _rejected_window_lines(plan)
     else:
         lines += ["## Recommended Campaign Windows", ""]
         if plan.strategy_summary:
@@ -115,13 +128,7 @@ def render_report(plan: CampaignPlan) -> str:
             for wid, r in risks
         ] or ["- No specific weather risks were identified."]
         lines.append("")
-        if plan.rejected_windows:
-            lines += ["### Rejected windows", ""]
-            lines += [
-                f"- {window.window_id} · {_cell(window.title)}: {rejection_reason(window)}"
-                for window in plan.rejected_windows
-            ]
-            lines.append("")
+        lines += _rejected_window_lines(plan)
 
     lines += ["## Forecast Summary", ""]
     if plan.forecast_summary:
