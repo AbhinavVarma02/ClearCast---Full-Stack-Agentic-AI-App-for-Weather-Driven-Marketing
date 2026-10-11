@@ -1,13 +1,3 @@
----
-title: ClearCast AI
-emoji: 🌦️
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # ClearCast: Weather-Driven Agentic AI Campaign Planner
 
 Weather changes what people want to buy, but a forecast on its own does not tell a small business when to run a promotion. ClearCast turns the forecast into that decision. You enter a market, a business type, a goal, and a tone, and it returns a short list of campaign windows for the next five days. Each window comes with the weather reasoning behind it, suggested ad copy, and risk notes, and each one is tied to the specific forecast observations it depends on.
@@ -193,7 +183,7 @@ python -m evaluation.run_eval          # 45 offline evaluation scenarios
 
 ## Deployment
 
-The live app runs on Hugging Face Spaces with the Docker SDK, configured by `sdk: docker` and `app_port: 7860` in this README's front matter. The multi-stage `Dockerfile` builds the TypeScript gateway with Node.js, then copies it into a slim Python 3.13 image. Inside the container, `deploy/launcher.py` starts the FastAPI orchestrator, the Fastify gateway, and the Gradio UI in order, waits for each to report healthy, restarts a crashed process with backoff, and shuts everything down cleanly.
+The live app runs on Hugging Face Spaces with the Docker SDK, configured by `sdk: docker` and `app_port: 7860` in the front matter of the Space's own README. The multi-stage `Dockerfile` builds the TypeScript gateway with Node.js, then copies it into a slim Python 3.13 image. Inside the container, `deploy/launcher.py` starts the FastAPI orchestrator, the Fastify gateway, and the Gradio UI in order, waits for each to report healthy, restarts a crashed process with backoff, and shuts everything down cleanly.
 
 Only Gradio listens on the public port. The gateway (127.0.0.1:8787) and the orchestrator (127.0.0.1:8001) stay on the container's loopback interface, and calls between the three services carry random tokens generated at boot. The OpenAI and OpenWeatherMap keys are stored as Space secrets. If the Space has been idle, the first visit can take a minute while it wakes up.
 
