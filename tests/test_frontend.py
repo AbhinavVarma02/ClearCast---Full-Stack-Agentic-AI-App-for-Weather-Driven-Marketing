@@ -104,6 +104,32 @@ def test_selecting_a_demo_client_fills_profile_defaults():
     )
 
 
+def test_numeric_constraint_fields_are_reset_to_unset_on_page_load():
+    # Gradio 6.6 shows a Number created with value=None as 0 once the constraints accordion
+    # opens and submits that 0; a page-load event must put the fields back to None.
+    numeric = {ui.min_temp._id, ui.max_temp._id, ui.max_precip._id, ui.max_wind._id}
+    resets = [
+        f
+        for f in ui.app.fns.values()
+        if any(event == "load" for _, event in f.targets) and {o._id for o in f.outputs} == numeric
+    ]
+    assert len(resets) == 1
+    assert resets[0].fn() == (None, None, None, None)
+
+
+def test_blank_numeric_constraints_stay_unset_but_zero_is_a_real_limit(gateway):
+    ui.generate_plan(*form())  # General brief with every numeric field blank
+    assert gateway.requests[0][1]["constraints"] is None
+    ui.generate_plan(*form(min_temp=0))  # 0 °F is a legitimate minimum, not "unset"
+    sent = gateway.requests[1][1]["constraints"]
+    assert sent["min_temperature_f"] == 0
+    assert (sent["max_temperature_f"], sent["max_precipitation_probability_pct"], sent["max_wind_speed_mph"]) == (
+        None,
+        None,
+        None,
+    )
+
+
 def test_original_input_validation_messages_are_preserved(gateway):
     assert "Please enter a location." in ui.generate_plan(*form(location="  "))[REPORT]
     assert "Please enter a business type." in ui.generate_plan(*form(business_type=""))[REPORT]

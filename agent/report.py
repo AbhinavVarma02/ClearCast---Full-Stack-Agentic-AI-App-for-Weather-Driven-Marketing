@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from agent.schemas import REVIEW_STATUS_LABELS, CampaignPlan, ReviewStatus
+from agent.schemas import REVIEW_STATUS_LABELS, CampaignPlan, CampaignWindow, ReviewStatus
 
 STATUS_NOTES = {
     ReviewStatus.PENDING_REVIEW: "Validated against retrieved weather evidence. Awaiting human review.",
@@ -39,6 +39,30 @@ def status_label(plan: CampaignPlan) -> str:
     return REVIEW_STATUS_LABELS[plan.status]
 
 
+def rejection_reason(window: CampaignWindow) -> str:
+    """Why a window was not recommended: its failed grounding checks and broken client rules."""
+    reasons = []
+    if window.grounding.issues or not window.grounding.verified:
+        issues = " ".join(_cell(issue) for issue in window.grounding.issues)
+        reasons.append(f"Grounding failed: {issues or 'the cited evidence could not be verified.'}")
+    if window.constraint_check.violations:
+        violations = "; ".join(_cell(v) for v in window.constraint_check.violations)
+        reasons.append(f"Hard constraints violated: {violations}.")
+    # Only possible when the plan itself failed: a window can pass its own checks and still be dropped.
+    return " ".join(reasons) or "Passed its own checks; not recommended because the plan failed validation."
+
+
+def _rejected_window_lines(plan: CampaignPlan) -> list[str]:
+    if not plan.rejected_windows:
+        return []
+    return [
+        "### Rejected windows",
+        "",
+        *(f"- {w.window_id} · {_cell(w.title)}: {rejection_reason(w)}" for w in plan.rejected_windows),
+        "",
+    ]
+
+
 def render_report(plan: CampaignPlan) -> str:
     loc = plan.resolved_location
     location = f"{loc.name}, {loc.state or loc.country}" if loc else plan.brief.location
@@ -61,6 +85,7 @@ def render_report(plan: CampaignPlan) -> str:
             "summarised below so the brief or constraints can be adjusted.",
             "",
         ]
+        lines += _rejected_window_lines(plan)
     else:
         lines += ["## Recommended Campaign Windows", ""]
         if plan.strategy_summary:
@@ -103,13 +128,7 @@ def render_report(plan: CampaignPlan) -> str:
             for wid, r in risks
         ] or ["- No specific weather risks were identified."]
         lines.append("")
-        if plan.rejected_windows:
-            lines += ["### Windows rejected by hard client constraints", ""]
-            for window in plan.rejected_windows:
-                lines.append(
-                    f"- {_cell(window.title)}: " + "; ".join(_cell(v) for v in window.constraint_check.violations)
-                )
-            lines.append("")
+        lines += _rejected_window_lines(plan)
 
     lines += ["## Forecast Summary", ""]
     if plan.forecast_summary:
